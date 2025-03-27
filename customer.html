@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main_style.css">
+    <link rel="stylesheet" href="adminCustomerPage.css">
+    <title>Πελάτης</title>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <ul>
+                <li><a class="menu-item" href="main.html">Αρχική</a></li>
+                <li><a class="menu-item" href="main.html#services-sec">Υπηρεσίες</a></li>
+                <li><a class="menu-item" href="reservation.html">Κράτηση</a></li>
+                <li><a class="menu-item" href="contact.html">Επικοινωνία</a></li>
+                <li><a class="menu-item" href="connect.html">Σύνδεση</a></li>
+            </ul>
+        </nav>
+    </header>
+	<main>
+    <div class="header-section admin-header">
+        <h1>John Doe</h1>
+        <h2>-ευχαριστούμε που προτιμάτε Camping Apollon Delphi-</h2>
+    </div>
+    <div>
+        <h3>Ενεργές Κρατήσεις</h3>
+        <p>δεν υπαρχεί ενεργή κράτηση</p>
+    </div>
+    <div class="management-container">
+        <div id="reservation" class="management-item">
+            <h3>Παλιότερες Κρατήσεις</h3>
+            <table id="reservationList" class="table-list">
+                <tr>
+                    <th>χώρος</th>
+                    <th>άτομα</th>
+                    <th>check-in</th>
+                    <th>check-out</th>
+                </tr>
+                <tr>
+                    <td>A</td>
+                    <td>2</td>
+                    <td>2025-10-10</td>
+                    <td>2025-10-12</td>
+                </tr>
+            </table>
+            <form>
+            </form>
+            <a href="reservation.html"><p>προσθήκη κράτησης</p></a>
+            <!-- <div id="addReservation">
+                <form>
+                    <fieldset>
+                        <legend>προσθήκη κράτησης</legend>
+                        <label for="reservationName">Όνομα</label>
+                        <input type="text" id="reservationName">
+                        <label >Χώρος</label>
+                        <input type="">
+                    </fieldset>
+                </form>
+            </div> -->
+        </div>
+        <div id="changeCredentials" class="management-item">
+            <h3>Αλλαγή Στοιχείων</h3>
+            <form class="admin-form">
+                <fieldset>
+                    <legend>νέα στοιχεία</legend>
+                    <label for="username">username:</label>
+                    <input id="username" type="text" placeholder="username" value="John Doe">
+                    <label for="password">password:</label>
+                    <input id="password" type="password" placeholder="password" value="1234">
+                    <label for="email">email:</label>
+                    <input id="email" type="email" value="johnDoe@domain.com">
+                    <label for="telNumber">τηλέφωνο:</label>
+                    <input id="telNumber" type="tel" value="2610906755">
+                    <button>ακύρωση αλλαγών</button>
+                    <input type="submit" value="Επιβεβαίωση αλλαγών">
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    </main>
+    <footer class="footer">
+        <p>Camping Apollon Delphi: Created by P. Dasargyris & J. Mylonas 2025</p>
+    </footer>
+</body>
+</html>
