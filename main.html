@@ -7,81 +7,8 @@
     <title>Home - Camping Apollon Delphi</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Enhanced Carousel Styles */
-        .header-section .carousel {
-            margin: 0 auto;
-            max-width: 1200px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .carousel-item img {
-            height: 60vh;
-            object-fit: cover;
-            width: 100%;
-        }
-        
-        .carousel-caption {
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
-            padding: 15px;
-            bottom: 30px;
-        }
-        
-        .carousel-indicators button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin: 0 5px;
-        }
-        
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            padding: 15px;
-        }
-        
-        @media (max-width: 768px) {
-            .carousel-item img {
-                height: 40vh;
-            }
-            
-            .carousel-caption {
-                bottom: 10px;
-                padding: 8px;
-            }
-            
-            .carousel-caption h5 {
-                font-size: 1rem;
-            }
-            
-            .carousel-caption p {
-                display: none;
-            }
-        }
-        
-        /* Improved Book Button */
-        .book-button {
-            background-color: #10f51c;
-            color: #000;
-            margin: 25px 0;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .book-button:hover {
-            transform: scale(1.05);
-            background-color: #0ed318;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 <body>
     <header>
@@ -189,6 +116,32 @@
                 }, 300);
             }, 1000);
         });
+
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.createElement('button');
+            mobileMenuBtn.className = 'mobile-menu-btn';
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        
+            const navBar = document.querySelector('.nav-bar');
+            navBar.prepend(mobileMenuBtn);
+        
+            const menuList = document.querySelector('.nav-bar ul');
+        
+            mobileMenuBtn.addEventListener('click', function() {
+                menuList.classList.toggle('active');
+            });
+        
+        // Close menu when a menu item is clicked
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        menuList.classList.remove('active');
+                    }
+                });
+            });
+        });
+
     </script>
 </body>
 </html>

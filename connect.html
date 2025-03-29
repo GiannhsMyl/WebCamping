@@ -15,7 +15,7 @@
                     <li><a class="menu-item" href="main.html#services-sec">Υπηρεσίες</a></li>
                     <li><a class="menu-item" href="reservation.html">Κράτηση</a></li>
                     <li><a class="menu-item" href="contact.html">Επικοινωνία</a></li>
-                    <li><a class="menu-item" href="connect.html">Σύνδεση</a></li>
+                    <li><a class="menu-item con-reg-item" href="connect.html">Σύνδεση</a></li>
                 </ul>
             </nav>
         </header>
@@ -28,9 +28,40 @@
                     <!--<label for="password">password</label>-->
                     <input type="password" placeholder="password" id="password" required>
                     <button id="con-button">Σύνδεση</button>
-                    <p>Δεν έχετε λογαριασμό; <a href="#">Εγγραφή</a></p>
+                    <p>Δεν έχετε λογαριασμό; <a id="register" href="#" onclick="register()">Εγγραφή</a></p>
+                </div>
+                <div class="register-box">
+                    <h3>Εγγραφή Χρήστη</h3>
+                    <label for="name">Όνομα</label>
+                    <input type="text" placeholder="Όνομα" required>
+                    <label for="lname">Επίθετο</label>
+                    <input type="text" placeholder="Επίθετο" required>
+                    <label for="email">Email</label>
+                    <input type="email" placeholder="email" required>
+                    <label for="password">Κωδικός Πρόσβασης</label>
+                    <input type="password" placeholder="password" required>
+                    <button id="reg-but">Εγγραφή</button>
+                    <p>Eχετε λογαριασμό; <a id="connect" href="#" onclick="connect()">Συνδεθείτε</a></p>
                 </div>
             </div>
         </main>
     </body>
+    <script>
+        let reg_box = document.querySelector(".register-box")
+        let con_box = document.querySelector(".connection-box")
+        let m_item = document.querySelector('.con-reg-item')
+
+        function connect() {
+            reg_box.style.display = "none"
+            con_box.style.display = "grid"
+            m_item.textContent = "Σύνδεση"
+        }
+
+        function register() {
+            con_box.style.display = "none"
+            reg_box.style.display = "grid"
+            m_item.textContent = "Εγγραφή"
+        }
+        
+    </script>
 </html>
