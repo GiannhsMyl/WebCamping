@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 				document.querySelector("#numberAvailabilityText").style.display="Block";
 			}
 		});
-	let editToggle=true;
+	let editToggle=false;
 	document.querySelector("#editReservation button").addEventListener("click",()=>{
 		console.log("edit");
 		let form=document.querySelectorAll("#reservationList tr");
@@ -20,11 +20,23 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}else{
 			editToggle=true;
 		}
-		let childrenForm=document.querySelectorAll("#reservationList td");
-		let rowNumber=document.querySelectorAll("#reservationList th").length;
-		for(let i=0;i<childrenForm.length;i++){
-			tempValue=!	editToggle? childrenForm[i].innerHTML:childrenForm[i].getAttribute("value");
+		let childrenForm=!editToggle? document.querySelectorAll("#reservationList input,#reservationList select"):document.querySelectorAll("#reservationList td");
+		let rowNumber=document.querySelectorAll("#reservationList th").length-2;
+		let args=[];
+		console.log(rowNumber)
+		for(let i=0;i<childrenForm.length;i++){//stuff to do here
+			tempValue=editToggle? childrenForm[i].innerHTML:childrenForm[i].value;
+			if(i%(rowNumber)==0 &&i!=0){
+				//addReservation("john Doe","A","5","2025-10-12","2025-10-12",editToggle);
+				args[(i+1)%(rowNumber)]=tempValue;
+				addReservation(args[1],args[2],args[3],args[4],args[5],editToggle);
+				console.log(args)
+				continue;
+			}
 			console.log(tempValue);
+			args[(i+1)%(rowNumber)]=tempValue;
+			console.log((i+1)%rowNumber)
+
 		}
 		for(let i=1;i<form.length;i++){
 			form[i].remove();
@@ -40,7 +52,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 			document.querySelector("#addZone").style.display="block";
 		}
 	});
-	addReservation("john Doe","A1","5","2025-10-12","2025-10-12",false);
+	addReservation("john Doe","A","5","2025-10-12","2025-10-12");
+	// addReservation("john Hoe","C","2","2025-8-12","2025-8-14");
+
 });
 
 function addReservation(name,zone,people,checkIn,checkOut,toggle=false){
@@ -68,6 +82,8 @@ function addReservation(name,zone,people,checkIn,checkOut,toggle=false){
 			let tempOption=document.createElement("option");
 			tempOption.setAttribute("value",zoneList[i]);
 			tempOption.innerHTML=zoneList[i];
+			if(zoneList[i]==zone)
+				tempOption.setAttribute("selected","");
 			selectZone.appendChild(tempOption);
 		}
 		zoneColumn.appendChild(selectZone);
