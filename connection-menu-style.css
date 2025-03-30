@@ -30,7 +30,7 @@ main {
     grid-template-columns: 1/1;
 }
 
-.connection-box h3, input, button, p{
+.connection-box h3, input, #reg-but, #con-button, p{
     margin: 0;
     width: 100%;
     height: 50px;
@@ -55,7 +55,7 @@ input, button {
     border-radius: 10px;
 }
 
-button {
+#reg-but, #con-button {
     margin-left: 2%;
     border-radius: 50px;
     background-color: rgba(32, 95, 220, 0.99);
@@ -71,7 +71,7 @@ p {
     border: none;
 }
 
-button:hover {
+#reg-but:hover, #con-button:hover {
     scale: 1.05;
     font-display:unset;
     background-color: rgb(73, 27, 236);

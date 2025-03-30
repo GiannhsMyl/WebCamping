@@ -71,9 +71,10 @@ body {
 @media (max-width: 680px) {
     .mobile-menu-btn {
         display: block;
-        position: absolute;
-        right: 15px;
-        top: 5px;
+        position:relative;
+        right: 0 !important;
+        top: 0 !important;
+        margin-bottom: 0;
     }
     
     .nav-bar ul {

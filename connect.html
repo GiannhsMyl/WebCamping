@@ -5,14 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="main_style.css">
         <link rel="stylesheet" href="connection-menu-style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <title>Connect</title>
     </head>
     <body>
         <header>
             <nav class="nav-bar">
                 <ul>
-                    <li><a class="menu-item" href="main.html">Αρχική</a></li>
-                    <li><a class="menu-item" href="main.html#services-sec">Υπηρεσίες</a></li>
+                    <li><a class="menu-item" href="index.html">Αρχική</a></li>
+                    <li><a class="menu-item" href="index.html#services-sec">Υπηρεσίες</a></li>
                     <li><a class="menu-item" href="reservation.html">Κράτηση</a></li>
                     <li><a class="menu-item" href="contact.html">Επικοινωνία</a></li>
                     <li><a class="menu-item con-reg-item" href="connect.html">Σύνδεση</a></li>
@@ -62,6 +63,30 @@
             reg_box.style.display = "grid"
             m_item.textContent = "Εγγραφή"
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.createElement('button');
+            mobileMenuBtn.className = 'mobile-menu-btn';
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        
+            const navBar = document.querySelector('.nav-bar');
+            navBar.prepend(mobileMenuBtn);
+        
+            const menuList = document.querySelector('.nav-bar ul');
+        
+            mobileMenuBtn.addEventListener('click', function() {
+                menuList.classList.toggle('active');
+            });
+        
+        // Close menu when a menu item is clicked
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        menuList.classList.remove('active');
+                    }
+                });
+            });
+        });
         
     </script>
 </html>
