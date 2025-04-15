@@ -2,27 +2,37 @@ document.addEventListener("DOMContentLoaded",()=>{
 	console.log("main");
 	curCalMonth=(new Date()).getMonth();
 	makeCallendar(curCalMonth);
+	let yearSelect=document.querySelector("#yearSelect");
 	document.querySelector(".callendarLtButton").addEventListener("click",()=>{
 		if(curCalMonth>0)
-			makeCallendar(--curCalMonth);
+			makeCallendar(--curCalMonth,yearSelect.value);
 	});
 	document.querySelector(".callendarGtButton").addEventListener("click",()=>{
 		if(curCalMonth<11)
-			makeCallendar(++curCalMonth);
+			makeCallendar(++curCalMonth),yearSelect.value;
+	});
+	document.querySelector("#changeAvailabilityButton").addEventListener("click",()=>{
+		let form=document.querySelector("#changeAvailabilityForm");
+		if(form.getAttribute("data-display")==="false"){
+			form.setAttribute("data-display","true");
+			form.style.display="block";
+		}else{
+			form.setAttribute("data-display","false");
+			form.style.display="none";
+		}
 	});
 
-
-	let radio=document.querySelectorAll(".admin-form input[type='radio']");
-	for(let i=0;i<radio.length;i++)
-		radio[i].addEventListener("click",()=>{
-			if(!document.querySelector("#changeAvailability").checked){
-				document.querySelector("#numberAvailability").style.display="none";
-				document.querySelector("#numberAvailabilityText").style.display="none";
-			}else{
-				document.querySelector("#numberAvailability").style.display="Block";
-				document.querySelector("#numberAvailabilityText").style.display="Block";
-			}
-		});
+	// let radio=document.querySelectorAll(".admin-form input[type='radio']");
+	// for(let i=0;i<radio.length;i++)
+	// 	radio[i].addEventListener("click",()=>{
+	// 		if(!document.querySelector("#changeAvailability").checked){
+	// 			document.querySelector("#numberAvailability").style.display="none";
+	// 			document.querySelector("#numberAvailabilityText").style.display="none";
+	// 		}else{
+	// 			document.querySelector("#numberAvailability").style.display="Block";
+	// 			document.querySelector("#numberAvailabilityText").style.display="Block";
+	// 		}
+	// 	});
 	let editToggle=false;
 	document.querySelector("#editReservation button").addEventListener("click",()=>{
 		console.log("edit");
@@ -134,7 +144,7 @@ function addReservation(name,zone,people,checkIn,checkOut,toggle=false){
 	document.querySelector("#reservationList").appendChild(row);
 }
 
-function makeCallendar(month,leapYear=false,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MARCH etc
+function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MARCH etc
 	let daysInMonth=10;
 	if(month%2===0)//if month even
 		if(month<7)
@@ -143,7 +153,7 @@ function makeCallendar(month,leapYear=false,year=(new Date()).getFullYear()){//0
 			daysInMonth=30;
 	else//month odd
 		if(month==1)
-			daysInMonth=leapYear? 29:28;
+			daysInMonth=isLeapYear(year)? 29:28;
 		else
 			if(month<6)
 				daysInMonth=30;
@@ -168,21 +178,46 @@ function makeCallendar(month,leapYear=false,year=(new Date()).getFullYear()){//0
 		if(i>tempDate){
 			temp.setAttribute("data-date",`${year}-${month+1}-${i-tempDate}`);
 			temp.innerHTML=i-tempDate;
-			if(isToday(new Date(`${year}-${month+1}-${i-tempDate}`)))
+			if(isToday(new Date(`${year}-${month+1}-${i-tempDate}`))){
 				temp.classList.add("today");
+			}
 			temp.addEventListener("click",(event)=>{
 				let date=new Date(event.currentTarget.getAttribute("data-Date"));
-				if(temp.classList.contains("today"))
+				if(temp.classList.contains("today")){
 					document.querySelector("#reservation>h3").innerHTML=`Κρατήσεις Σήμερα`;
-				else
-					document.querySelector("#reservation>h3").innerHTML=`Κρατήσεις ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]}`;
-				window.location.href = "#reservation";
+					document.querySelector("#availability>h3").innerHTML=`Διαθεσιμότητα Σήμερα`;
+
+				}
+				else{
+					document.querySelector("#reservation>h3").innerHTML=(date.getFullYear()===(new Date()).getFullYear())? `Κρατήσεις ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]}` : `Κρατήσεις ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]} ${date.getFullYear()}`;
+					document.querySelector("#availability>h3").innerHTML=(date.getFullYear()===(new Date()).getFullYear())? `Διαθεσιμότητα ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]}` : `Διαθεσιμότητα ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]} ${date.getFullYear()}`;		
+				}
+				window.location.href ="#reservation";
 			});
 		}
 		calBox.appendChild(temp);
 	}
+	let selectYear=document.querySelector("#yearSelect");
+	selectYear.innerHTML="";
+	for(let i=0;i<5;i++){
+		let temp=document.createElement("option");
+		temp.innerHTML=(i===0)? String(Number(year)+1) :String(Number(year)-i+1);
+		if(temp.innerHTML==year)
+			temp.setAttribute("selected","")
+		temp.setAttribute("value",temp.innerHTML);
+		temp.addEventListener("click",(event)=>{
+			
+		});
+		selectYear.appendChild(temp);
+	}
+	selectYear.addEventListener("change",()=>{
+		makeCallendar(month,selectYear.value);
+	});
 }
 function isToday(date){
 	let todayDate=new Date();
 	return date.getDate()===todayDate.getDate() && date.getMonth()===todayDate.getMonth() && date.getFullYear()===todayDate.getFullYear();
+}
+function isLeapYear(year){
+	return year%4===0 && year%100!=0 ? true : (year%400===0? true: false);
 }
