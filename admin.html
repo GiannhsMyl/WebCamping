@@ -43,6 +43,29 @@
         </a>
     </div>
     <div class="management-container">
+        <div id="reservation" class="management-item">
+            <h3>Κρατήσεις Σήμερα</h3>
+            <table id="reservationList" class="table-list">
+                <tr>
+                    <th>όνομα</th>
+                    <th>χώρος</th>
+                    <th>άτομα</th>
+                    <th>check-in</th>
+                    <th>check-out</th>
+                    <th id="editReservation"><button>επεξεργασία</button></th>
+                </tr>
+            </table>
+            <a href="reservation.html"><button>προσθήκη κράτησης</button></a>
+            <div class="callendar">
+                <div class="callendarHeader">
+                    <h3>Ημερολόγιο</h3>
+                    <h4></h4>
+                </div>
+                <div class="callendarBox"></div>
+                <button class="callendarLtButton">&lt-</button>
+                <button class="callendarGtButton">-&gt</button>
+            </div>
+        </div>
         <div id="availability" class="management-item">
             <h3>Αλλαγή Διαθεσιμότητας</h3>
             <form class="admin-form">
@@ -70,33 +93,6 @@
                     <input type="submit" value="συνέχεια">
                 </fieldset>
             </form>
-        </div>
-        <div id="reservation" class="management-item">
-            <h3>Κρατήσεις</h3>
-            <table id="reservationList" class="table-list">
-                <tr>
-                    <th>όνομα</th>
-                    <th>χώρος</th>
-                    <th>άτομα</th>
-                    <th>check-in</th>
-                    <th>check-out</th>
-                    <th id="editReservation"><button>επεξεργασία</button></th>
-                </tr>
-            </table>
-            <form>
-            </form>
-            <a href="reservation.html"><button>προσθήκη κράτησης</button></a>
-            <!-- <div id="addReservation">
-                <form>
-                    <fieldset>
-                        <legend>προσθήκη κράτησης</legend>
-                        <label for="reservationName">Όνομα</label>
-                        <input type="text" id="reservationName">
-                        <label >Χώρος</label>
-                        <input type="">
-                    </fieldset>
-                </form>
-            </div> -->
         </div>
         <div id="zoneManagement" class="management-item">
             <h3>Διαχείριση Χώρων</h3>

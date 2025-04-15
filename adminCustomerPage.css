@@ -71,3 +71,33 @@ button{
 	margin-bottom:10px;
 	width:auto;
 }
+.callendarBox{
+	display: grid;
+	grid-template-columns: repeat(7,auto);
+	width: 75%;
+	gap: 0px 0px;
+	padding:1px;
+	/* margin:10px; */
+	/* grid-template-rows: auto; */
+
+}
+.callendarBox>div{
+	padding: 5px;
+	text-align: right;
+	width: auto;
+	height: 75px;
+	border:1px solid black;
+	background-color: #eceaea;
+}
+.callendarBox>span{
+	text-align: center;
+	font-weight: bold;
+	width: auto;
+	height: 30px;
+	border:1px solid black;
+	background-color: #d0cece;
+}
+.callendarBox>.today{
+	font-size: 18px;
+	font-weight: bold;
+}
