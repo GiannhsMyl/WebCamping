@@ -36,18 +36,18 @@
 	display: none;
 }
 .table-list{
-	border: 10px;
+	/* border: 2px solid #A2A0A0;; */
 	width: 50%;
 	margin:auto;
 }
 .table-list td,th{
-	background-color: #415536;
+	background-color: #CCCACA;
 	text-align: center;
 	width: 150px;
 	height: 30px;
 }
 .table-list td{
-	background-color: #8BD463;
+	background-color: #eceaea;
 }
 .dashboard a{
 	color:#000000;
@@ -101,4 +101,15 @@ button{
 .callendarBox>.today{
 	font-size: 18px;
 	font-weight: bold;
+}
+#piCanvas{
+	background-color: #AAAAAA;
+	width: 175px;
+	height: 175px;
+}
+#canvasContainer{
+	display:flex;
+	margin-left:10%;
+	margin-right:5%;
+	flex-wrap:wrap;
 }

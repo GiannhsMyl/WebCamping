@@ -1,3 +1,14 @@
+let reservations=[
+	{name:"John Doe",zone:"A",people:"5",checkIn:"2025-10-12",checkOut:"2025-10-12"},
+	{name:"John Hoe",zone:"C",people:"2",checkIn:"2025-05-05",checkOut:"2025-05-05"}
+];
+let zones=[
+	{zone:"A",totalAvailability:"1",cost:"1"},
+	{zone:"B",totalAvailability:"1",cost:"1"},
+	{zone:"C",totalAvailability:"1",cost:"1"},
+	{zone:"D",totalAvailability:"1",cost:"1"},
+];
+const dpr=window.devicePixelRatio;
 document.addEventListener("DOMContentLoaded",()=>{
 	console.log("main");
 	curCalMonth=(new Date()).getMonth();
@@ -21,47 +32,16 @@ document.addEventListener("DOMContentLoaded",()=>{
 			form.style.display="none";
 		}
 	});
-
-	// let radio=document.querySelectorAll(".admin-form input[type='radio']");
-	// for(let i=0;i<radio.length;i++)
-	// 	radio[i].addEventListener("click",()=>{
-	// 		if(!document.querySelector("#changeAvailability").checked){
-	// 			document.querySelector("#numberAvailability").style.display="none";
-	// 			document.querySelector("#numberAvailabilityText").style.display="none";
-	// 		}else{
-	// 			document.querySelector("#numberAvailability").style.display="Block";
-	// 			document.querySelector("#numberAvailabilityText").style.display="Block";
-	// 		}
-	// 	});
 	let editToggle=false;
 	document.querySelector("#editReservation button").addEventListener("click",()=>{
 		console.log("edit");
 		let form=document.querySelectorAll("#reservationList tr");
-		if(editToggle){
-			editToggle=false;
-		}else{
-			editToggle=true;
-		}
-		let childrenForm=!editToggle? document.querySelectorAll("#reservationList input,#reservationList select"):document.querySelectorAll("#reservationList td");
-		let rowNumber=document.querySelectorAll("#reservationList th").length-2;
-		let args=[];
-		console.log(rowNumber)
-		for(let i=0;i<childrenForm.length;i++){//stuff to do here
-			tempValue=editToggle? childrenForm[i].innerHTML:childrenForm[i].value;
-			if(i%(rowNumber)==0 &&i!=0){
-				//addReservation("john Doe","A","5","2025-10-12","2025-10-12",editToggle);
-				args[(i+1)%(rowNumber)]=tempValue;
-				addReservation(args[1],args[2],args[3],args[4],args[5],editToggle);
-				console.log(args)
-				continue;
-			}
-			console.log(tempValue);
-			args[(i+1)%(rowNumber)]=tempValue;
-			console.log((i+1)%rowNumber)
-
-		}
+		editToggle=!editToggle;
 		for(let i=1;i<form.length;i++){
 			form[i].remove();
+		}
+		for(let i=0;i<reservations.length;i++){
+			addReservation(reservations[i],editToggle);
 		}
 	});
 	let addZoneToggle=true;
@@ -74,12 +54,14 @@ document.addEventListener("DOMContentLoaded",()=>{
 			document.querySelector("#addZone").style.display="block";
 		}
 	});
-	addReservation("john Doe","A","5","2025-10-12","2025-10-12");
-	// addReservation("john Hoe","C","2","2025-8-12","2025-8-14");
-
+	for(let i=0;i<reservations.length;i++){
+		addReservation(reservations[i]);
+	}
+	fillAvailability();
+	fillZoneTable();
 });
 
-function addReservation(name,zone,people,checkIn,checkOut,toggle=false){
+function addReservation(reserv,toggle=false){
 	let row=document.createElement("tr");
 	let nameColumn=document.createElement("td");
 
@@ -92,6 +74,12 @@ function addReservation(name,zone,people,checkIn,checkOut,toggle=false){
 	let checkOutColumn=document.createElement("td");
 	
 	let deleteColumn=document.createElement("td");
+
+	let name=reserv.name;
+	let zone=reserv.zone;
+	let people=reserv.people;
+	let checkIn=reserv.checkIn;
+	let checkOut=reserv.checkOut;
 	if(toggle){
 		let nameInput=document.createElement("input");
 		nameInput.setAttribute("type","text");
@@ -99,7 +87,10 @@ function addReservation(name,zone,people,checkIn,checkOut,toggle=false){
 		nameColumn.appendChild(nameInput);
 
 		let selectZone=document.createElement("select");
-		let zoneList= ["A","B","C","D"];
+		let zoneList= [];
+		for(let i=0;i<zones.length;i++)
+			zoneList.push(zones[i].zone);
+		console.log(zoneList);
 		for(let i=0;i<zoneList.length;i++){
 			let tempOption=document.createElement("option");
 			tempOption.setAttribute("value",zoneList[i]);
@@ -131,9 +122,11 @@ function addReservation(name,zone,people,checkIn,checkOut,toggle=false){
 		checkInColumn.innerHTML=checkIn;
 		checkOutColumn.innerHTML=checkOut;
 	}
-	//let deleteButton=document.createElement("button")
-	//deleteButton.innerHTML="Διαγραφή";
-	//deleteColumn.appendChild(deleteButton);
+	if(toggle){
+		let deleteButton=document.createElement("button")
+		deleteButton.innerHTML="Διαγραφή";
+		deleteColumn.appendChild(deleteButton);
+	}
 	row.appendChild(nameColumn);
 	row.appendChild(zoneColumn);
 	row.appendChild(peopleColumn);
@@ -220,4 +213,79 @@ function isToday(date){
 }
 function isLeapYear(year){
 	return year%4===0 && year%100!=0 ? true : (year%400===0? true: false);
+}
+function makePie(canvas,con,max){
+	let ctx=canvas.getContext("2d");
+	let point={x:canvas.width/(2*dpr),y:canvas.height/(2*dpr)};
+	ctx.fillStyle="#54C774";
+	ctx.scale(dpr,dpr);
+	ctx.beginPath();
+	ctx.moveTo(point.x,point.y)
+	ctx.arc(point.x,point.y,point.y-10,0,-con/max*2*Math.PI,true);
+	ctx.lineTo(point.x,point.y);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+
+
+	ctx.fillStyle="#C75454";
+	ctx.beginPath();
+	ctx.moveTo(point.x,point.y)
+	ctx.arc(point.x,point.y,point.y-10,0,-(con/max)*2*Math.PI,false);
+	ctx.lineTo(point.x,point.y);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+}
+function fillAvailability(){
+	let pieContainer=document.querySelector("#canvasContainer");
+	let availabilityTable=document.querySelector("#availability>.table-list");
+	for(let i=0;i<zones.length;i++){
+		let div=document.createElement("div");
+		div.setAttribute("align","center");
+		let canvas=document.createElement("canvas");
+		canvas.setAttribute("id",`pie-${zones[i].zone}`);
+		div.appendChild(canvas);
+		let p=document.createElement("p");
+		p.innerHTML=`Ζώνη ${zones[i].zone}`;
+		div.appendChild(p);
+		pieContainer.appendChild(div);
+
+		let rect =canvas.getBoundingClientRect();
+		canvas.width=rect.width*dpr;
+		canvas.height=rect.height*dpr;
+		canvas.style.width=`${rect.width}px`
+		canvas.style.height=`${rect.height}px`;
+
+		let avail=Math.random();
+		canvas.setAttribute("title",`Zώνη ${zones[i].zone} - ${avail}/${zones[i].totalAvailability}`)
+		makePie(canvas,avail,1);
+
+		let tr=document.createElement("tr");
+		for(let j=0;j<2;j++){
+			let td=document.createElement("td");
+			td.innerHTML=(j==0)? zones[i].zone:avail;
+			tr.appendChild(td);
+		}
+		availabilityTable.appendChild(tr);
+	}
+}
+function fillZoneTable(){
+	let zoneTable=document.querySelector("#zoneManagement .table-list");
+	let trHead=document.createElement("tr");
+	for(let j in zones[0]){
+		let temp=document.createElement("th");
+		temp.innerHTML=j;
+		trHead.appendChild(temp);
+	}
+	zoneTable.appendChild(trHead);
+	for(let i=0;i<zones.length;i++){
+		let tr=document.createElement("tr");
+		for(let j in zones[i]){
+			let td=document.createElement("td");
+			td.innerHTML=`${zones[i][j]}`
+			tr.appendChild(td);
+		}
+		zoneTable.appendChild(tr);
+	}
 }
