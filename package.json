@@ -1,0 +1,23 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "Camping Web App\r ===============",
+  "main": "adminPage.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GiannhsMyl/WebCamping.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GiannhsMyl/WebCamping/issues"
+  },
+  "homepage": "https://github.com/GiannhsMyl/WebCamping#readme",
+  "dependencies": {
+    "handlebars": "^4.7.8"
+  }
+}
