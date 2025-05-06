@@ -43,6 +43,18 @@ document.addEventListener("DOMContentLoaded",()=>{
 		for(let i=0;i<reservations.length;i++){
 			addReservation(reservations[i],editToggle);
 		}
+		if(editToggle){
+			let parentDiv=document.querySelector("#reservation");
+			let saveButton=document.createElement("button");
+			saveButton.setAttribute("class","saveButton");
+			saveButton.innerHTML="Αποθήκευση αλλαγών";
+			saveButton.addEventListener("click",()=>{
+				alert("Οι αλλαγές αποθηκεύτηκαν!");
+			});
+			parentDiv.appendChild(saveButton);
+		}else{
+			document.querySelector("#reservation .saveButton").remove();
+		}
 	});
 	let addZoneToggle=true;
 	document.querySelector("#addZoneToggle").addEventListener("click",()=>{
@@ -278,6 +290,29 @@ function fillZoneTable(){
 		temp.innerHTML=j;
 		trHead.appendChild(temp);
 	}
+	let editButton=document.createElement("button");
+	editButton.setAttribute("type","button");
+	editButton.setAttribute("data-toggle","false");
+	editButton.innerHTML="Επεξεργασία";
+	editButton.addEventListener("click",()=>{
+		let edit=(editButton.getAttribute("data-toggle")==="false")? false:true;
+		editButton.setAttribute("data-toggle",!edit);
+		if(!edit){
+			let parentDiv=document.querySelector("#zoneManagement");
+			let saveButton=document.createElement("button");
+			saveButton.setAttribute("class","saveButton");
+			saveButton.innerHTML="Αποθήκευση αλλαγών";
+			saveButton.addEventListener("click",()=>{
+				alert("Οι αλλαγές αποθηκεύτηκαν!");
+			});
+			parentDiv.appendChild(saveButton);
+		}else{
+			document.querySelector("#zoneManagement .saveButton").remove();
+		}
+	});
+	let editTh=document.createElement("th");
+	editTh.appendChild(editButton);
+	trHead.appendChild(editTh);
 	zoneTable.appendChild(trHead);
 	for(let i=0;i<zones.length;i++){
 		let tr=document.createElement("tr");
@@ -286,6 +321,7 @@ function fillZoneTable(){
 			td.innerHTML=`${zones[i][j]}`
 			tr.appendChild(td);
 		}
+		tr.appendChild(document.createElement("td"));
 		zoneTable.appendChild(tr);
 	}
 }
