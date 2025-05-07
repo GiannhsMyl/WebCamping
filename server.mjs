@@ -38,7 +38,6 @@ app.get('/', async (req, res) => {
         const services = await loadServices(); // Φόρτωση δεδομένων υπηρεσιών
         res.render('index', {
             title: 'Home - Camping Apollon Delphi',
-            description: 'Το Camping Apollon βρίσκεται στην είσοδο του μαγευτικού χωριού των Δελφών, σε απόσταση μόλις ενός χιλιομέτρου από τον αρχαιολογικό χώρο! Περιλαμβάνει σύγχρονες εγκαταστάσεις πισίνας και γηπέδων, καθώς και εστιατόριο με θέα τον ελαιώνα της Άμφισσας και τον Κορινθιακό κόλπο! Τέλος, διαθέτει χώρους για σκηνές, τροχόσπιτα, καθώς και Bungalow παραδοσιακής αρχιτεκτονικής, θέλοντας να καλύψει τις ανάγκες κάθε επισκέπτη και κατασκηνωτή!',
             services
         });
     } catch (err) {
@@ -46,6 +45,19 @@ app.get('/', async (req, res) => {
         res.status(500).send('Σφάλμα διακομιστή');
     }
 });
+
+app.get('/contact', async (req, res) => {
+  res.render('contact.hbs');
+});
+
+app.get('/reservation', async (req,res) => {
+  res.render('reservation.hbs');
+});
+
+app.get('/connect', async (req,res) => {
+  res.render('connect.hbs');
+});
+
 
 // Εκκίνηση server
 app.listen(PORT, () => {
