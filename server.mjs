@@ -37,6 +37,7 @@ app.get('/', async (req, res) => {
     try {
         const services = await loadServices(); // Φόρτωση δεδομένων υπηρεσιών
         res.render('index', {
+            css : ["main_style"],
             title: 'Home - Camping Apollon Delphi',
             services
         });
@@ -47,15 +48,24 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/contact', async (req, res) => {
-  res.render('contact.hbs');
+  res.render('contact.hbs', {
+    title : "contact",
+    css: ["main_style"] 
+  });
 });
 
 app.get('/reservation', async (req,res) => {
-  res.render('reservation.hbs');
+  res.render('reservation.hbs', {
+    title: "reservation",
+    css: ["main_style", "reservation-style"] 
+  });
 });
 
 app.get('/connect', async (req,res) => {
-  res.render('connect.hbs');
+  res.render('connect.hbs', {
+    title: "connect",
+    css: ["main_style", "connection-menu-style"] 
+  });
 });
 
 
