@@ -1,0 +1,52 @@
+
+<main class="con-menu">
+    <!-- views/login.hbs -->
+    {{!-- Επεκτείνεται από layout "main" --}}
+    {{#*inline "styles"}}
+    <link rel="stylesheet" href="/css/login.css">
+    {{/inline}}
+
+    <div class="login-container">
+    <h2>Σύνδεση Χρήστη</h2>
+    <form action="/login" method="POST">
+        <label for="username">Όνομα χρήστη</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Κωδικός</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Σύνδεση</button>
+    </form>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.createElement('button');
+        mobileMenuBtn.className = 'mobile-menu-btn';
+        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+    
+        const navBar = document.querySelector('.nav-bar');
+        navBar.prepend(mobileMenuBtn);
+    
+        const menuList = document.querySelector('.nav-bar ul');
+    
+        mobileMenuBtn.addEventListener('click', function() {
+            menuList.classList.toggle('active');
+        });
+    
+    // Close menu when a menu item is clicked
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    menuList.classList.remove('active');
+                }
+            });
+        });
+    });
+    
+</script>

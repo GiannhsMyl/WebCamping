@@ -1,0 +1,47 @@
+<article>
+    <h2>Reservation</h2>
+    <div class="reserv-details">
+        <form action="" method="post">
+            <label for="check-in">Check-in Date</label>
+            <input type="date" id="check-in" name="check-in" required>
+            <label for="check-out">Check-out Date</label>
+            <input type="date" id="check-out" name="check-out" required>
+            <label for="spaces-type">Space Type</label>
+            <select name="spaces-type" id="spaces-type" required>
+                <option value="Tent">Tent Space</option>
+                <option value="trailer">Trailer Space</option>
+                <option value="bungalow">Bungalow</option>
+            </select>
+            <label for="people-no">Number of People</label>
+            <input type="number" id="peop-no" name="peop-no" required>
+            <label for="space-no">Number of Spaces</label>
+            <input type="number" name="space-no" id="space-no" required>
+            <input type="submit" id="search" value="Search">
+        </form>
+    </div>
+</article>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.createElement('button');
+        mobileMenuBtn.className = 'mobile-menu-btn';
+        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+    
+        const navBar = document.querySelector('.nav-bar');
+        navBar.prepend(mobileMenuBtn);
+    
+        const menuList = document.querySelector('.nav-bar ul');
+    
+        mobileMenuBtn.addEventListener('click', function() {
+            menuList.classList.toggle('active');
+        });
+    
+    // Close menu when a menu item is clicked
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    menuList.classList.remove('active');
+                }
+            });
+        });
+    });
+</script>
