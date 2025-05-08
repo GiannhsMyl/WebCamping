@@ -1,26 +1,27 @@
 <main class="cont-main">
     <article class="contact-cont">
         <div>
-            <h2>Contact</h2>
+            <h2 id="conth">Contact</h2>
         </div>
-        <form action="" method="post">
+        <form id="contactForm">
             <fieldset>
                 <legend style="margin-left: 10px;">Προσωπικά Στοιχεία</legend>
                 <p id="mesage-text" style="margin-left: 10px;">Συμπληρώστε τα στοιχεία επικοινωνίας σας...</p>
                 <label for="fname" >Όνομα</label>
-                <input type="text" id="fname" required>
+                <input type="text" id="fname" name="fname" required>
                 <label for="lname">Επίθετο</label>
-                <input type="text" id="lname" required>
+                <input type="text" id="lname" name="lname" required>
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" required>
                 <label for="telephone">Τηλέφωνο</label>
-                <input type="tel" id="telephone" required>
+                <input type="tel" id="telephone" name="telephone" required>
             </fieldset>
             <fieldset>
                 <legend style="margin-left: 10px;">Μήνυμα</legend>
-                <input type="text" id="subject" placeholder="Θέμα" required>
+                <input type="text" id="subject" placeholder="Θέμα" name="sub" required>
                 <textarea name="minima" id="minima" placeholder="Κείμενο Μηνύματος"></textarea>
-                <input type="submit">
+                <button type="submit" id="submit">Υποβολή</button>
+                <!--<input type="submit">-->
             </fieldset>
         </form>
         <style>
@@ -42,3 +43,41 @@
         margin: 0;
     }
 </style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('contactForm');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch('/new_contact_message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.redirect) {
+          window.location.href = result.redirect;
+          window.alert("Επιτυχής Αποστολή μηνύματος!")
+        } else {
+          console.error('Αποτυχία:', result.message);
+        }
+
+      } catch (error) {
+        console.error('Σφάλμα αποστολής:', error);
+      }
+    });
+  });
+</script>
+
+<!--action="/new_contact_message" method="post"-->
