@@ -4,6 +4,8 @@ import { engine } from 'express-handlebars';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import bodyParser from 'body-parser';
+import nodemailer from 'nodemailer';
 
 // Χρήσιμο για __dirname (δεν υπάρχει σε ES Modules)
 const __filename = fileURLToPath(import.meta.url);
@@ -31,6 +33,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Στατικά αρχεία
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Αρχική σελίδα
 app.get('/', async (req, res) => {
@@ -66,6 +71,43 @@ app.get('/connect', async (req,res) => {
     title: "connect",
     css: ["main_style", "connection-menu-style"] 
   });
+});
+
+
+app.post('/new_contact_message', async (req, res) => {
+  const { fname, lname, email, telephone, sub, minima } = req.body;
+
+  // Έλεγχος αν λείπουν πεδία
+  if (!fname || !lname || !email || !telephone || !sub || !minima) {
+    return res.status(400).json({ message: 'Συμπλήρωσε όλα τα πεδία.' });
+  }
+
+  try {
+    // Δημιουργία transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'camping.hmty@gmail.com',      
+        pass: 'dsyd efsl kstn hqvn'             
+      }
+    });
+
+    // Ρυθμίσεις email
+    const mailOptions = {
+      from: email,
+      to: 'camping.hmty@gmail.com',           
+      subject: 'Νέο μήνυμα από τη φόρμα επικοινωνίας',
+      text: `Όνομα: ${fname}\nΕπίθετο: ${lname}\nEmail: ${email}\nΤηλέφωνο: ${telephone}\n\nΘέμα: ${sub}\n\nΜήνυμα:\n${minima}`
+    };
+
+    // Αποστολή email
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ redirect: '/contact' });
+
+  } catch (error) {
+    console.error('Σφάλμα αποστολής email:', error);
+    res.status(500).json({ message: 'Σφάλμα κατά την αποστολή του μηνύματος.' });
+  }
 });
 
 
