@@ -1,0 +1,97 @@
+<main>
+    <div class="header-section admin-header">
+        <h1>Σελίδα Διαχειριστή</h1>
+        <h2>-Camping Apollon Delphi-</h2>
+    </div>
+    <div class="ser-container dashboard">
+        <a href="#availability">
+            <div class="ser-item">
+                Αλλαγή Διαθεσιμότητας
+            </div>
+        </a>
+        <a href="#reservation">
+            <div class="ser-item">
+                προβολή κρατήσεων
+            </div>
+        </a>
+        <a href="#zoneManagement">
+            <div class="ser-item">
+                Διαχείριση Χώρων
+            </div>
+        </a>
+    </div>
+    <div class="management-container">
+        <div class="callendar management-item">
+            <div class="callendarHeader">
+                <h3>Ημερολόγιο</h3>
+                <h4></h4>
+            </div>
+            <div class="callendarBox"></div>
+            <button class="callendarLtButton">&lt-</button>
+            <button class="callendarGtButton">-&gt</button>
+            <select id="yearSelect">
+            </select>
+        </div>
+        <div id="reservation" class="management-item">
+            <h3>Κρατήσεις Σήμερα</h3>
+            <table id="reservationList" class="table-list">
+                <tr>
+                    <th>όνομα</th>
+                    <th>χώρος</th>
+                    <th>άτομα</th>
+                    <th>check-in</th>
+                    <th>check-out</th>
+                    <th id="editReservation"><button>επεξεργασία</button></th>
+                </tr>
+            </table>
+            <a href="reservation.html"><button>προσθήκη κράτησης</button></a>
+        </div>
+        <div id="availability" class="management-item">
+            <h3>Διαθεσιμότητα Σήμερα</h3>
+            <div id="canvasContainer">
+            </div>
+            <table class="table-list">
+                <tr>
+                    <th>Χώρος</th>
+                    <th>Διαθεσιμότητα</th>
+                </tr>
+            </table>
+            <button id="changeAvailabilityButton">Αλλαγή Διαθεσιμότητας</button>
+            <form class="admin-form" id="changeAvailabilityForm" data-display="false">
+                <fieldset>
+                    <legend>Διαθεσιμότητα</legend>
+                    <label for="availabilitySelect">Χώρος:</label>
+                    <select id="availabilitySelect">
+                        <option value="">...</option>
+                        <option value="A">Α</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                    </select>
+                    <label for="numberAvailability" id="numberAvailabilityText">Aριθμός:</label>
+                    <input id="numberAvailability" type="number" min="0">
+                    <input type="submit" value="συνέχεια">
+                </fieldset>
+            </form>
+        </div>
+        <div id="zoneManagement" class="management-item">
+            <h3>Διαχείριση Χώρων</h3>
+            <div>
+                <table id="zoneList" class="table-list">
+                </table>
+                <button id="addZoneToggle">προσθήκη χώρου</button>
+                <form class="admin-form" id="addZone">
+                    <fieldset>
+                        <legend>προσθήκη χώρου</legend>
+                        <label for="zoneName">Όνομα Χώρου</label>
+                        <input type="text" id="zoneName">
+                        <label for="zoneCapacity">Συνολική Χωριτικότητα Χώρου</label>
+                        <input type="number" id="zoneCapacity">
+                        <label for="defaultCost">Προκαθορισμένη Τιμή</label>
+                        <input id="defaultCost" type="number">
+                        <input type="submit" value="προσθήκη">
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+	</main>

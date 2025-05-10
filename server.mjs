@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
+import "dotenv/config";
 
 // Χρήσιμο για __dirname (δεν υπάρχει σε ES Modules)
 const __filename = fileURLToPath(import.meta.url);
@@ -42,7 +43,7 @@ app.get('/', async (req, res) => {
     try {
         const services = await loadServices(); // Φόρτωση δεδομένων υπηρεσιών
         res.render('index', {
-            css : ["main_style"],
+            css : ["main_style.css","https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"],
             title: 'Home - Camping Apollon Delphi',
             services
         });
@@ -55,21 +56,21 @@ app.get('/', async (req, res) => {
 app.get('/contact', async (req, res) => {
   res.render('contact.hbs', {
     title : "contact",
-    css: ["main_style"] 
+    css: ["main_style.css"] 
   });
 });
 
 app.get('/reservation', async (req,res) => {
   res.render('reservation.hbs', {
     title: "reservation",
-    css: ["main_style", "reservation-style"] 
+    css: ["main_style.css", "reservation-style.css"] 
   });
 });
 
 app.get('/connect', async (req,res) => {
   res.render('connect.hbs', {
     title: "connect",
-    css: ["main_style", "connection-menu-style"] 
+    css: ["main_style.css", "connection-menu-style.css"] 
   });
 });
 
@@ -109,7 +110,15 @@ app.post('/new_contact_message', async (req, res) => {
     res.status(500).json({ message: 'Σφάλμα κατά την αποστολή του μηνύματος.' });
   }
 });
+app.get("/admin",async (req,res)=>{
+    try {
+      res.render("admin.hbs", {title:"admin Page", css:["main_style.css","adminCustomerPage.css"],script:["adminPage.js"]});
+    } catch (error) {
+      console.error('Σφάλμα φόρτωσης υπηρεσιών:', err);
+      res.status(500).send('Σφάλμα διακομιστή');
+    }
 
+});
 
 // Εκκίνηση server
 app.listen(PORT, () => {
