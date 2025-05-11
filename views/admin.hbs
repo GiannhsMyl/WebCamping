@@ -44,7 +44,7 @@
                     <th id="editReservation"><button>επεξεργασία</button></th>
                 </tr>
             </table>
-            <a href="reservation.html"><button>προσθήκη κράτησης</button></a>
+            <a href="/reservation"><button>προσθήκη κράτησης</button></a>
         </div>
         <div id="availability" class="management-item">
             <h3>Διαθεσιμότητα Σήμερα</h3>
@@ -79,15 +79,15 @@
                 <table id="zoneList" class="table-list">
                 </table>
                 <button id="addZoneToggle">προσθήκη χώρου</button>
-                <form class="admin-form" id="addZone">
+                <form class="admin-form" id="addZone" method="POST" action="/addZone" >
                     <fieldset>
                         <legend>προσθήκη χώρου</legend>
                         <label for="zoneName">Όνομα Χώρου</label>
-                        <input type="text" id="zoneName">
+                        <input name="zoneName"type="text" id="zoneName">
                         <label for="zoneCapacity">Συνολική Χωριτικότητα Χώρου</label>
-                        <input type="number" id="zoneCapacity">
+                        <input name="capacity"type="number" id="zoneCapacity">
                         <label for="defaultCost">Προκαθορισμένη Τιμή</label>
-                        <input id="defaultCost" type="number">
+                        <input name="defaultCost"id="defaultCost" type="number">
                         <input type="submit" value="προσθήκη">
                     </fieldset>
                 </form>
