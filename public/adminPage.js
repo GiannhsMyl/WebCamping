@@ -70,6 +70,12 @@ document.addEventListener("DOMContentLoaded",()=>{
 		addReservation(reservations[i]);
 	}
 	fillAvailability();
+	document.querySelector("#changeAvailabilityForm input[type=submit]").addEventListener("click",()=>{
+		let d=(new Date()).toDateString;
+		console.log(d);
+			
+	});
+	document.querySelector("#changeAvailabilityForm input[type=hidden]").value=new Date().toISOString().split("T")[0];
 	fillZoneTable();
 });
 
@@ -95,10 +101,12 @@ function addReservation(reserv,toggle=false){
 	if(toggle){
 		let nameInput=document.createElement("input");
 		nameInput.setAttribute("type","text");
+		nameInput.setAttribute("name","name");
 		nameInput.setAttribute("value",name);
 		nameColumn.appendChild(nameInput);
 
 		let selectZone=document.createElement("select");
+		selectZone.setAttribute("name","zoneName");
 		let zoneList= [];
 		for(let i=0;i<zones.length;i++)
 			zoneList.push(zones[i].zone);
@@ -115,16 +123,19 @@ function addReservation(reserv,toggle=false){
 
 		let numberInput=document.createElement("input");
 		numberInput.setAttribute("type","number");
+		numberInput.setAttribute("name","numberOfPeople");
 		numberInput.setAttribute("value",people);
 		peopleColumn.appendChild(numberInput);
 
 		let checkInInput=document.createElement("input");
 		checkInInput.setAttribute("type","date");
 		checkInInput.setAttribute("value",checkIn);
+		checkInInput.setAttribute("name","date");
 		checkInColumn.appendChild(checkInInput);
 
 		let checkOutInput=document.createElement("input");
 		checkOutInput.setAttribute("type","date");
+		checkInInput.setAttribute("name","date");
 		checkOutInput.setAttribute("value",checkOut);
 		checkOutColumn.appendChild(checkOutInput);
 	}else{
@@ -188,6 +199,7 @@ function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MA
 			}
 			temp.addEventListener("click",(event)=>{
 				let date=new Date(event.currentTarget.getAttribute("data-Date"));
+				document.querySelector("#changeAvailabilityForm input[type=hidden]").value=`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
 				if(temp.classList.contains("today")){
 					document.querySelector("#reservation>h3").innerHTML=`Κρατήσεις Σήμερα`;
 					document.querySelector("#availability>h3").innerHTML=`Διαθεσιμότητα Σήμερα`;

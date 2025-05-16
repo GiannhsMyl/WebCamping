@@ -61,14 +61,15 @@
                 <fieldset>
                     <legend>Διαθεσιμότητα</legend>
                     <label for="availabilitySelect">Χώρος:</label>
-                    <select id="availabilitySelect">
+                    <select name="zone" id="availabilitySelect">
                         <option value="">...</option>
                         <option value="A">Α</option>
                         <option value="B">B</option>
                         <option value="C">C</option>
                     </select>
                     <label for="numberAvailability" id="numberAvailabilityText">Aριθμός:</label>
-                    <input id="numberAvailability" type="number" min="0">
+                    <input name="availability" id="numberAvailability" type="number" min="0">
+                    <input name="date" type="hidden">
                     <input type="submit" value="συνέχεια">
                 </fieldset>
             </form>
@@ -79,7 +80,7 @@
                 <table id="zoneList" class="table-list">
                 </table>
                 <button id="addZoneToggle">προσθήκη χώρου</button>
-                <form class="admin-form" id="addZone" method="POST" action="/addZone" >
+                <form class="admin-form" id="addZone" method="POST" action="/admin/addZone" >
                     <fieldset>
                         <legend>προσθήκη χώρου</legend>
                         <label for="zoneName">Όνομα Χώρου</label>

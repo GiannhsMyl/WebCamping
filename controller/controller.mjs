@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
+import "dotenv/config";
+
 const loadServices = async () => {
   try {
     const data = await fs.readFile('data/services.json', 'utf-8');
@@ -53,8 +55,8 @@ async function sendContactMessage(req,res){
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'camping.hmty@gmail.com',      
-        pass: 'dsyd efsl kstn hqvn'             
+        user: process.env.EMAIL_ADDR,      
+        pass: process.env.EMAIL_PASS
       }
     });
 
@@ -83,4 +85,7 @@ function adminPage(req,res){
       res.status(500).send('Σφάλμα διακομιστή');
     }
 }
-export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage};
+function addZone(req,res){
+    res.send(req.body);
+}
+export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone};

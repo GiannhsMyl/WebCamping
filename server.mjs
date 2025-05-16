@@ -32,10 +32,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/",router);
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/main
 
 // Εκκίνηση server
 app.listen(PORT, () => {
