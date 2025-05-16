@@ -3,9 +3,9 @@
     <div class="reserv-details">
         <form action="" method="post">
             <label for="check-in">Check-in Date</label>
-            <input type="date" id="check-in" name="check-in" required>
+            <input type="date" id="checkin" name="check-in" required>
             <label for="check-out">Check-out Date</label>
-            <input type="date" id="check-out" name="check-out" required>
+            <input type="date" id="checkout" name="check-out" required>
             <label for="spaces-type">Space Type</label>
             <select name="spaces-type" id="spaces-type" required>
                 <option value="Tent">Tent Space</option>
@@ -44,4 +44,43 @@
             });
         });
     });
+
+
+    const checkinInput = document.getElementById('checkin');
+    const checkoutInput = document.getElementById('checkout');
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+
+    checkinInput.min = todayStr;
+
+    checkoutInput.disabled = true;
+    checkoutInput.value = '';
+
+    checkinInput.addEventListener('change', function() {
+      const checkinDate = new Date(this.value);
+      
+      if (!isNaN(checkinDate.getTime())) {
+        // Προσθέτουμε μία ημέρα
+        const nextDay = new Date(checkinDate);
+        nextDay.setDate(checkinDate.getDate() + 1);
+
+        // Διαμορφώνουμε την ημερομηνία στο format YYYY-MM-DD
+        const year = nextDay.getFullYear();
+        const month = String(nextDay.getMonth() + 1).padStart(2, '0');
+        const day = String(nextDay.getDate()).padStart(2, '0');
+        const minCheckoutDate = `${year}-${month}-${day}`;
+
+        checkoutInput.min = minCheckoutDate;
+        checkoutInput.value = '';
+        checkoutInput.disabled = false;
+      } else {
+        checkoutInput.disabled = true;
+        checkoutInput.value = '';
+      }
+    });
+
 </script>
