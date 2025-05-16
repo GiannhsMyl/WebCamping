@@ -318,6 +318,14 @@ function fillZoneTable(){
 				alert("Οι αλλαγές αποθηκεύτηκαν!");
 			});
 			parentDiv.appendChild(saveButton);
+			let zoneList=document.querySelectorAll("#zoneList tr");
+			let head=zoneList[0].querySelectorAll("th");
+			for(let i=1;i<zoneList.length;i++){
+				let temp=zoneList[i].querySelectorAll("td");
+				for(let j=0;j<head.length-1;j++){
+					console.log(`${head[j].innerHTML} : ${temp[j].innerHTML}`)
+				}
+			}
 		}else{
 			document.querySelector("#zoneManagement .saveButton").remove();
 		}
