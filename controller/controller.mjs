@@ -86,6 +86,6 @@ function adminPage(req,res){
     }
 }
 function addZone(req,res){
-    res.send(req.body);
+    res.send(req);
 }
 export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone};
