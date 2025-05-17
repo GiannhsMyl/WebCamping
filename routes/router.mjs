@@ -22,5 +22,14 @@ router.post("/login", authController.handleLogin);
 router.get("/logout", authController.handleLogout);   
 
 router.post("/admin/addZone",controller.addZone);
+router.post("/admin/editZone",controller.editZone);
+
+router.post("/admin/getZones",controller.getAllZones);
+router.post("/admin/getReservations",controller.getAllReservations);
+
+router.get("/admin/delete/:zone",controller.deleteZone);
+
+router.post("/admin/editReservations",controller.editReservations);
+router.get("/admin/deleteReservation/:reservation",controller.deleteReservation);
 
 export {router}

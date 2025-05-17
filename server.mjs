@@ -21,7 +21,7 @@ const securePort = process.env.PORT || 3443;
 const app = express();
 
 app.use(session({
-    secret: "dGhpcyBpcyBhIHNlY3JldCBzdHJpbmcK",
+    secret: process.env.SESSION_SEC,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 60*60*1000 },
@@ -46,8 +46,7 @@ app.use("/",router);
 
 // Εκκίνηση server
 
-https
-   .createServer(
+https.createServer(
       {
          key: fs.readFileSync('./private.key'),
          cert: fs.readFileSync('./certificate.crt'),

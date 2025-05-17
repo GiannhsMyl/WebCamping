@@ -1,16 +1,11 @@
-let reservations=[
-	{name:"John Doe",zone:"A",people:"5",checkIn:"2025-10-12",checkOut:"2025-10-12"},
-	{name:"John Hoe",zone:"C",people:"2",checkIn:"2025-05-05",checkOut:"2025-05-05"}
-];
-let zones=[
-	{zone:"A",totalAvailability:"1",cost:"1"},
-	{zone:"B",totalAvailability:"1",cost:"1"},
-	{zone:"C",totalAvailability:"1",cost:"1"},
-	{zone:"D",totalAvailability:"1",cost:"1"},
-];
+let reservations=[];
+let zones=[];
+
 const dpr=window.devicePixelRatio;
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded",async ()=>{
 	console.log("main");
+	zones=await refreshZones();
+	reservations=await refreshReservations();
 	curCalMonth=(new Date()).getMonth();
 	makeCallendar(curCalMonth);
 	let yearSelect=document.querySelector("#yearSelect");
@@ -48,7 +43,26 @@ document.addEventListener("DOMContentLoaded",()=>{
 			let saveButton=document.createElement("button");
 			saveButton.setAttribute("class","saveButton");
 			saveButton.innerHTML="Αποθήκευση αλλαγών";
-			saveButton.addEventListener("click",()=>{
+			saveButton.addEventListener("click",async ()=>{
+				let reservationTable=document.querySelectorAll("#reservationList tr");
+				let editedReservations=[];
+				for(let i=1;i<reservationTable.length;i++){
+					editedReservations[i-1]={};
+					let inp=reservationTable[i].querySelectorAll("input,select");
+					for(let j=0;j<inp.length;j++){
+						editedReservations[i-1][inp[j].getAttribute("name")]=inp[j].value;
+					}
+				}
+				const response=await fetch("/admin/editReservations",{
+					method:"POST",
+					headers:{
+						"Content-Type":"Application/json"
+					},
+					body:JSON.stringify(editedReservations)
+				});
+				let answer=await response.text();
+				console.log(`response:${answer}`)
+				console.log(editedReservations);
 				alert("Οι αλλαγές αποθηκεύτηκαν!");
 			});
 			parentDiv.appendChild(saveButton);
@@ -72,7 +86,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 	fillAvailability();
 	document.querySelector("#changeAvailabilityForm input[type=submit]").addEventListener("click",()=>{
 		let d=(new Date()).toDateString;
-		console.log(d);
+		// console.log(d);
 			
 	});
 	document.querySelector("#changeAvailabilityForm input[type=hidden]").value=new Date().toISOString().split("T")[0];
@@ -106,11 +120,11 @@ function addReservation(reserv,toggle=false){
 		nameColumn.appendChild(nameInput);
 
 		let selectZone=document.createElement("select");
-		selectZone.setAttribute("name","zoneName");
+		selectZone.setAttribute("name","zone");
 		let zoneList= [];
 		for(let i=0;i<zones.length;i++)
 			zoneList.push(zones[i].zone);
-		console.log(zoneList);
+		// console.log(zoneList);
 		for(let i=0;i<zoneList.length;i++){
 			let tempOption=document.createElement("option");
 			tempOption.setAttribute("value",zoneList[i]);
@@ -123,19 +137,19 @@ function addReservation(reserv,toggle=false){
 
 		let numberInput=document.createElement("input");
 		numberInput.setAttribute("type","number");
-		numberInput.setAttribute("name","numberOfPeople");
+		numberInput.setAttribute("name","people");
 		numberInput.setAttribute("value",people);
 		peopleColumn.appendChild(numberInput);
 
 		let checkInInput=document.createElement("input");
 		checkInInput.setAttribute("type","date");
+		checkInInput.setAttribute("name","checkIn");
 		checkInInput.setAttribute("value",checkIn);
-		checkInInput.setAttribute("name","date");
 		checkInColumn.appendChild(checkInInput);
 
 		let checkOutInput=document.createElement("input");
 		checkOutInput.setAttribute("type","date");
-		checkInInput.setAttribute("name","date");
+		checkOutInput.setAttribute("name","checkOut");
 		checkOutInput.setAttribute("value",checkOut);
 		checkOutColumn.appendChild(checkOutInput);
 	}else{
@@ -146,9 +160,12 @@ function addReservation(reserv,toggle=false){
 		checkOutColumn.innerHTML=checkOut;
 	}
 	if(toggle){
-		let deleteButton=document.createElement("button")
+		let adel=document.createElement("a");
+		adel.setAttribute("href",`admin/deleteReservation/${reserv.id}`);
+		let deleteButton=document.createElement("button");
 		deleteButton.innerHTML="Διαγραφή";
-		deleteColumn.appendChild(deleteButton);
+		adel.appendChild(deleteButton);
+		deleteColumn.appendChild(adel);
 	}
 	row.appendChild(nameColumn);
 	row.appendChild(zoneColumn);
@@ -306,7 +323,7 @@ function fillZoneTable(){
 	editButton.setAttribute("type","button");
 	editButton.setAttribute("data-toggle","false");
 	editButton.innerHTML="Επεξεργασία";
-	editButton.addEventListener("click",()=>{
+	editButton.addEventListener("click",async ()=>{
 		let edit=(editButton.getAttribute("data-toggle")==="false")? false:true;
 		editButton.setAttribute("data-toggle",!edit);
 		if(!edit){
@@ -314,7 +331,31 @@ function fillZoneTable(){
 			let saveButton=document.createElement("button");
 			saveButton.setAttribute("class","saveButton");
 			saveButton.innerHTML="Αποθήκευση αλλαγών";
-			saveButton.addEventListener("click",()=>{
+			saveButton.addEventListener("click",async ()=>{
+				let zoneList=document.querySelectorAll("#zoneList tr");
+				let head=zoneList[0].querySelectorAll("th");
+				let temp=[];
+				//  for(let i=0;i<head.length-1;i++){
+				// 	// console.log(head[i].innerHTML);
+				// 	temp[head[i].innerHTML]="";
+				//  }
+				for(let i=1;i<zoneList.length;i++){
+					temp[i-1]={};
+					let inp=zoneList[i].querySelectorAll("input");
+					for(let j=0;j<inp.length;j++){
+						temp[i-1][head[j].innerHTML]=inp[j].value;
+					}
+					console.log(temp[i-1]);
+				}
+				const response=await fetch("/admin/editZone",{
+					method:"POST",
+					headers:{
+						"Content-Type":"Application/json"
+					},
+					body:JSON.stringify(temp)
+				});
+				let answer=await response.text();
+				console.log(`response:${answer}`)
 				alert("Οι αλλαγές αποθηκεύτηκαν!");
 			});
 			parentDiv.appendChild(saveButton);
@@ -322,12 +363,50 @@ function fillZoneTable(){
 			let head=zoneList[0].querySelectorAll("th");
 			for(let i=1;i<zoneList.length;i++){
 				let temp=zoneList[i].querySelectorAll("td");
+				let tr=document.createElement("tr");
 				for(let j=0;j<head.length-1;j++){
-					console.log(`${head[j].innerHTML} : ${temp[j].innerHTML}`)
+					let td=document.createElement("td");
+					let input=document.createElement("input");
+					input.setAttribute("name",head[j].innerHTML);
+					input.setAttribute("type","text");
+					input.setAttribute("value",temp[j].innerHTML);
+					td.appendChild(input);
+					tr.appendChild(td);
+					// console.log(`${head[j].innerHTML} : ${temp[j].innerHTML}`)
 				}
+				let delButton=document.createElement("button");
+				// delButton.setAttribute(,);
+				let adel=document.createElement("a");//not-the-singer
+				adel.setAttribute("href",`admin/delete/${temp[0].innerHTML}`);
+				delButton.innerHTML="Διαγραφή";
+				let delTd=document.createElement("td");
+				adel.appendChild(delButton)
+				delTd.appendChild(adel);
+				tr.appendChild(delTd);
+				zoneTable.appendChild(tr);
+			}
+			for(let i=1;i<zoneList.length;i++){
+				zoneList[i].remove();
 			}
 		}else{
 			document.querySelector("#zoneManagement .saveButton").remove();
+			let zoneList=document.querySelectorAll("#zoneList tr");
+			let head=zoneList[0].querySelectorAll("th");
+			for(let i=1;i<zoneList.length;i++){
+				let temp=zoneList[i].querySelectorAll("td input");
+				let tr=document.createElement("tr");
+				for(let j=0;j<head.length-1;j++){
+					let td=document.createElement("td");
+					td.innerHTML=temp[j].getAttribute("value");
+					tr.appendChild(td);
+				}
+				tr.appendChild(document.createElement("td"));
+				zoneTable.appendChild(tr);
+			}
+			for(let i=1;i<zoneList.length;i++){
+				zoneList[i].remove();
+			}
+
 		}
 	});
 	let editTh=document.createElement("th");
@@ -344,4 +423,24 @@ function fillZoneTable(){
 		tr.appendChild(document.createElement("td"));
 		zoneTable.appendChild(tr);
 	}
+}
+async function refreshZones() {
+	const response=await fetch("admin/getZones",{
+	method:"POST",
+	headers:{
+		"Content-type":"application/json"
+	}
+	});
+	let zones=await response.json(); 
+	return zones;
+}
+async function refreshReservations() {
+	const response=await fetch("admin/getReservations",{
+		method:"POST",
+	headers:{
+		"Content-type":"application/json"
+	}
+	});
+	let reservations=await response.json();
+	return reservations;
 }

@@ -1,7 +1,16 @@
 import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
 import "dotenv/config";
-
+let reservations=[
+	{id:1,name:"John Doe",zone:"A",people:"5",checkIn:"2025-10-12",checkOut:"2025-10-12"},
+	{id:2,name:"John Hoe",zone:"C",people:"2",checkIn:"2025-05-05",checkOut:"2025-05-05"}
+];
+let zones=[
+	{zone:"A",totalAvailability:"1",cost:"1"},
+	{zone:"B",totalAvailability:"1",cost:"1"},
+	{zone:"C",totalAvailability:"1",cost:"1"},
+	{zone:"D",totalAvailability:"1",cost:"1"},
+];
 
 const loadServices = async () => {
   try {
@@ -70,15 +79,15 @@ async function sendContactMessage(req,res){
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'camping.hmty@gmail.com',      
-        pass: 'dsyd efsl kstn hqvn'             
+        user: process.env.EMAIL_ADDR,      
+        pass: process.env.EMAIL_PASS             
       }
     });
 
     // Ρυθμίσεις email
     const mailOptions = {
       from: email,
-      to: 'camping.hmty@gmail.com',           
+      to: process.env.EMAIL_ADDR,           
       subject: 'Νέο μήνυμα από τη φόρμα επικοινωνίας',
       text: `Όνομα: ${fname}\nΕπίθετο: ${lname}\nEmail: ${email}\nΤηλέφωνο: ${telephone}\n\nΘέμα: ${sub}\n\nΜήνυμα:\n${minima}`
     };
@@ -105,7 +114,53 @@ function adminPage(req,res){
 }
 
 function addZone(req,res){
-    res.send(req);
+    zones.push(req.body);
+    res.redirect("/admin");
+}
+function editZone(req,res){
+    zones=req.body;
+    res.send("all fine");
+}
+function getAllZones(req,res){
+    res.send(JSON.stringify(zones));
+}
+function deleteZone(req,res){
+    let zone2Delete=req.params.zone;
+    let temp=undefined;
+    for(let i=0;i<zones.length;i++){
+      if(zones[i].zone==zone2Delete){
+        temp=zones[i];
+        zones.splice(i,1);
+        break;
+      }
+    }
+    if(temp!==undefined)
+        res.redirect("/admin");
+    else
+        res.send(`${zone2Delete} doesnt exist`);
+
+}
+function getAllReservations(req,res){
+    res.send(JSON.stringify(reservations));
+}
+function editReservations(req,res){
+    reservations=req.body;
+    res.send("reservations edited");
+}
+function deleteReservation(req,res){
+  let reservation2Delete=req.params.reservation;
+  let temp=undefined;
+  for(let i=0;i<reservations.length;i++){
+      if(reservations[i].id==reservation2Delete){
+        temp=reservations[i];
+        reservations.splice(i,1);
+        break;
+      }
+    }
+    if(temp!==undefined)
+        res.redirect("/admin");
+    else
+        res.send(`${reservation2Delete} doesnt exist`);
 }
 
-export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage};
+export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation};
