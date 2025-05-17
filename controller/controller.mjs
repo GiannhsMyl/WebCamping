@@ -2,20 +2,24 @@ import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
 import "dotenv/config";
 
+
 const loadServices = async () => {
   try {
     const data = await fs.readFile('data/services.json', 'utf-8');
     return JSON.parse(data);
   } catch (err) {
     console.error('Σφάλμα ανάγνωσης JSON:', err);
-    throw err; // Ανασήκωση σφάλματος για να το χειριστεί ο caller
+    throw err;
   }
 };
+
+
 async function mainPage(req,res){
       try {
-        const services = await loadServices(); // Φόρτωση δεδομένων υπηρεσιών
+        const services = await loadServices();
         res.render('index', {
-            css : ["main_style.css","https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"],
+            css : ["main_style.css","https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"], 
+            script : ["collapsed_menu.js"],
             title: 'Home - Camping Apollon Delphi',
             services
         });
@@ -24,24 +28,35 @@ async function mainPage(req,res){
         res.status(500).send('Σφάλμα διακομιστή');
     }
 }
+
+
 function contactPage(req,res){
   res.render('contact.hbs', {
     title : "contact",
-    css: ["main_style.css"] 
+    css: ["main_style.css"], 
+    script : ["collapsed_menu.js", "new_contact_message.js"]
   });
 }
+
+
 function reservationPage(req,res){
     res.render('reservation.hbs', {
     title: "reservation",
-    css: ["main_style.css", "reservation-style.css"] 
+    css: ["main_style.css", "reservation-style.css"], 
+    script : ["collapsed_menu.js", "reservation.js"]
   });
 }
+
+
 function login(req,res){
     res.render('connect.hbs', {
     title: "connect",
-    css: ["main_style.css", "connection-menu-style.css"] 
+    css: ["main_style.css", "connection-menu-style.css"], 
+    script : ["collapsed_menu.js"]
   });
 }
+
+
 async function sendContactMessage(req,res){
   const { fname, lname, email, telephone, sub, minima } = req.body;
 
@@ -55,8 +70,8 @@ async function sendContactMessage(req,res){
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_ADDR,      
-        pass: process.env.EMAIL_PASS
+        user: 'camping.hmty@gmail.com',      
+        pass: 'dsyd efsl kstn hqvn'             
       }
     });
 
@@ -77,6 +92,9 @@ async function sendContactMessage(req,res){
     res.status(500).json({ message: 'Σφάλμα κατά την αποστολή του μηνύματος.' });
   }
 }
+
+
+
 function adminPage(req,res){
     try {
       res.render("admin.hbs", {title:"admin Page", css:["main_style.css","adminCustomerPage.css"],script:["adminPage.js"]});
@@ -85,7 +103,9 @@ function adminPage(req,res){
       res.status(500).send('Σφάλμα διακομιστή');
     }
 }
+
 function addZone(req,res){
     res.send(req);
 }
-export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone};
+
+export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage};
