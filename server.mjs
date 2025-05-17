@@ -3,21 +3,29 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import https from 'https';
+import fs from 'fs';
+import session from 'express-session'
 
 import bodyParser from 'body-parser';
 
 import "dotenv/config";
 import {router} from "./routes/router.mjs"
-// import * as controller from "../project/controller/controller.mjs";
-// Χρήσιμο για __dirname (δεν υπάρχει σε ES Modules)
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Φόρτωση services από JSON (με async/await)
-
+const securePort = process.env.PORT || 3443;
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+app.use(session({
+    secret: "dGhpcyBpcyBhIHNlY3JldCBzdHJpbmcK",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 60*60*1000 },
+}));
 
 // Ρύθμιση Handlebars
 app.engine('hbs', engine({ extname: 'hbs', defaultLayout: 'main' }));
@@ -33,8 +41,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/",router);
 
+
+
+
 // Εκκίνηση server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+https
+   .createServer(
+      {
+         key: fs.readFileSync('./private.key'),
+         cert: fs.readFileSync('./certificate.crt'),
+      },
+      app
+   )
+   .listen(securePort, () => {
+      console.log(`Η εφαρμογή τρέχει στο https://127.0.0.1:${securePort}/`);
+   });
+
+
 
