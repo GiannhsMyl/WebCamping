@@ -21,7 +21,6 @@
                 <input type="text" id="subject" placeholder="Θέμα" name="sub" required>
                 <textarea name="minima" id="minima" placeholder="Κείμενο Μηνύματος"></textarea>
                 <button type="submit" id="submit">Υποβολή</button>
-                <!--<input type="submit">-->
             </fieldset>
         </form>
         <style>
@@ -32,7 +31,7 @@
         </style>
     </article>
     <article class="addr-camp">
-        <p>email: delphi@camping.gr </p><p>Address:  Apollon Camping, Delphi 33054, Fokida, Greece </p><p>Tel.: +30 22650 83392</p>
+        <p>email: camping.hmty@gmail.gr </p><p>Address:  Apollon Camping, Delphi 33054, Fokida, Greece </p><p>Tel.: +30 22650 83392</p>
     </article>
     <div class="container-map">
         <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d99942.50808639111!2d22.3934965!3d38.4829488!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x135f7982b69df595%3A0xcca415250f9c4417!2sBungalow%20-%20Camping%20Apollon%20Hotel!5e0!3m2!1sel!2sgr!4v1742291238518!5m2!1sel!2sgr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -43,41 +42,3 @@
         margin: 0;
     }
 </style>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('contactForm');
-
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-
-      try {
-        const res = await fetch('/new_contact_message', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-
-        if (res.ok && result.redirect) {
-          window.location.href = result.redirect;
-          window.alert("Επιτυχής Αποστολή μηνύματος!")
-        } else {
-          console.error('Αποτυχία:', result.message);
-        }
-
-      } catch (error) {
-        console.error('Σφάλμα αποστολής:', error);
-      }
-    });
-  });
-</script>
-
-<!--action="/new_contact_message" method="post"-->

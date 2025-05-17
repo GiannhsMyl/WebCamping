@@ -73,14 +73,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Optional: Add smooth auto-rotation to the carousel
+   
     document.addEventListener('DOMContentLoaded', function() {
         var myCarousel = new bootstrap.Carousel(document.getElementById('mainCarousel'), {
-            interval: 5000, // Change slide every 5 seconds
-            pause: 'hover' // Pause on hover
+            interval: 5000, 
+            pause: 'hover' 
         });
         
-        // Add animation to book button on page load
+        
         const bookBtn = document.querySelector('.book-button');
         setTimeout(() => {
             bookBtn.style.transform = 'scale(1.05)';
@@ -88,31 +88,6 @@
                 bookBtn.style.transform = 'scale(1)';
             }, 300);
         }, 1000);
-    });
-
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuBtn = document.createElement('button');
-        mobileMenuBtn.className = 'mobile-menu-btn';
-        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-    
-        const navBar = document.querySelector('.nav-bar');
-        navBar.prepend(mobileMenuBtn);
-    
-        const menuList = document.querySelector('.nav-bar ul');
-    
-        mobileMenuBtn.addEventListener('click', function() {
-            menuList.classList.toggle('active');
-        });
-    
-    // Close menu when a menu item is clicked
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    menuList.classList.remove('active');
-                }
-            });
-        });
     });
 
 </script>
