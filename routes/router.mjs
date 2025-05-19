@@ -16,6 +16,7 @@ router.post("/new_contact_message",controller.sendContactMessage);
 
 router.get("/connect", checkAuth, controller.login);
 
+router.use("/admin",authController.checkAuth)
 router.get("/admin",controller.adminPage);
 
 router.post("/login", authController.handleLogin);      
@@ -32,4 +33,7 @@ router.get("/admin/delete/:zone",controller.deleteZone);
 router.post("/admin/editReservations",controller.editReservations);
 router.get("/admin/deleteReservation/:reservation",controller.deleteReservation);
 
+router.use((err,req,res,next)=>{
+    res.render("error",{css : ["main_style.css","adminCustomerPage.css"],title:"error",message:err.message,errtrace:err.stack});
+});
 export {router}

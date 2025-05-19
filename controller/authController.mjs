@@ -83,4 +83,11 @@ export const handleLogout = (req, res) => {
         res.redirect("/");
     });
 };
-
+//
+export let checkAuth= (req,res,next)=>{
+    if(req.session.user){
+        next();
+    }else{
+        res.redirect("/connect")
+    }
+}
