@@ -21,7 +21,14 @@
     </div>
     {{#each result}}
         <div class="availability-result">
-            <img src="/public/images/main_image.jpg" alt="camping">
-            <p>Check-In: {{checkin}}<br>Check-Out: {{checkout}}<br>Space Type: {{spacetype}}<br>Number of Spaces: {{spacenum}}<br>Number of People: {{peoplenum}}<br>Total Price: {{price}}</p>
+            <img src="images/main_image.jpg" alt="camping">
+            <div class="reservation-info">
+                <p>Check-In: {{checkin}}</p>
+                <p>Check-Out: {{checkout}}</p>
+                <p>Space Type: {{spacetype}}</p>
+                <p>Number of Spaces: {{spacenum}}</p>
+                <p>Number of People: {{peoplenum}}</p>
+                <p>Total Price: {{price}}</p>
+            </div>
     {{/each}}
 </article>
