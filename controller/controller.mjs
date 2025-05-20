@@ -15,7 +15,8 @@ let zones=[
 	{zone:"C",totalAvailability:"1",cost:"1"},
 	{zone:"D",totalAvailability:"1",cost:"1"},
 ];
-
+zones=model.getAllZones();
+reservations=model.getAllReservations();
 const loadServices = async () => {
   try {
     const data = await fs.readFile('data/services.json', 'utf-8');

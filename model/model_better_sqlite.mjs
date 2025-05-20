@@ -38,5 +38,12 @@ export let check_availability = (checkin, checkout, people, spacenum, spacetype)
     }
 };
 
-
+export function getAllZones(){
+    const zones=sql.prepare("SELECT N.id,N.zoneType,T.defaultPeople,T.maxPeople,T.additionalChargePerPerson,T.highSeasonPrice,T.lowSeasonPrice,T.numOfZones FROM (ZONENUM AS N JOIN ZONETYPE AS T ON N.zoneType=T.name) ");
+    return zones.all();
+}
+export function getAllReservations(){
+    const reservations=sql.prepare("SELECT V.firstName,V.lastName,V.email,R.people,R.checkIn,R.checkOut,R.totalPrice,R.zoneId,R.zoneType FROM (RESERVATION AS R JOIN VISITOR AS V ON R.visitorId=V.email)");
+    return reservations.all();
+}
 export default (check_availability, zone_client_info);

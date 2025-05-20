@@ -107,8 +107,8 @@ function addReservation(reserv,toggle=false){
 	
 	let deleteColumn=document.createElement("td");
 
-	let name=reserv.name;
-	let zone=reserv.zone;
+	let name=`${reserv.firstName} ${reserv.lastName}`;
+	let zone=`${reserv.zoneType}-${reserv.zoneId}`;
 	let people=reserv.people;
 	let checkIn=reserv.checkIn;
 	let checkOut=reserv.checkOut;
@@ -153,7 +153,10 @@ function addReservation(reserv,toggle=false){
 		checkOutInput.setAttribute("value",checkOut);
 		checkOutColumn.appendChild(checkOutInput);
 	}else{
-		nameColumn.innerHTML=name;
+		let linkVisitor=document.createElement("a");
+		linkVisitor.setAttribute("href",`/visitor/${reserv.email}`);
+		linkVisitor.innerHTML=name;
+		nameColumn.appendChild(linkVisitor);
 		zoneColumn.innerHTML=zone;
 		peopleColumn.innerHTML=people;
 		checkInColumn.innerHTML=checkIn;
