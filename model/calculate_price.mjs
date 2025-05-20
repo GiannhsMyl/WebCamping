@@ -1,4 +1,4 @@
-import check_availability from './model_better_sqlite.mjs';
+import * as model from './model_better_sqlite.mjs';
 
 import db from 'better-sqlite3';
 
@@ -8,7 +8,8 @@ const sql = db('model/database.db', {fileMustExist: true});
 
 export let calculate_total_price = (checkin, checkout, people, spacenum, spacetype) => {
    
-    const availability = check_availability(checkin, checkout, people, spacenum, spacetype);
+    const availability = model.check_availability(checkin, checkout, people, spacenum, spacetype);
+    console.log(parseInt(availability), typeof(availability));
     if (availability === 0) {
         throw new Error("Δεν υπάρχει διαθεσιμότητα για τις επιλεγμένες παραμέτρους");
     }
