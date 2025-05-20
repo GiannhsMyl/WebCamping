@@ -149,3 +149,20 @@ footer {
     width: 95%;
 }
 
+.availability-result {
+    width: 90%;
+    margin-top: 100px !important;
+    margin-bottom: 70px;
+    height: 300px;
+    background-color: lightgray;
+    display: flex;
+}
+
+.availability-result p {
+    size: 20px;
+} 
+
+.availability-result img {
+    width: 40%;
+}
+
