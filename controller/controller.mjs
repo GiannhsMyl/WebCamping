@@ -68,10 +68,10 @@ async function reservationPage(req,res){
 
 async function reservation_search(req, res) {
   try {
-    const {checkin, checkout, spacetype, spacenum, people} = req.body;
+    const {checkIn:checkin, checkOut:checkout, spacesType:spacetype, spaceNo:spacenum, peopNo:people} = req.body;
   
     console.log('Received data:', req.body);
-    console.log(spacetype);
+    console.log(people);
     let results = await calculate_total_price(checkin, checkout, people, spacenum, spacetype);
     let zones = await model.zone_client_info();
     res.render('reservation.hbs', {
@@ -79,7 +79,7 @@ async function reservation_search(req, res) {
       css: ["main_style.css", "reservation-style.css"], 
       script : ["collapsed_menu.js", "reservation.js"],
       zone: zones,
-      result: [{checkin: checkin, checkout: checkout, spacetype: spacetype, spacenum: spacenum, peoplenum: people, price: results}]
+      result: [{"checkin": checkin, "checkout": checkout, "spacetype": spacetype, "spacenum": spacenum, "peoplenum": people, "price": results}]
     });
   } catch (err) {
     throw err;

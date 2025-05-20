@@ -2,27 +2,26 @@
     <h2>Reservation</h2>
     <div class="reserv-details">
         <form action="/reservation" method="post" enctype="application/x-www-form-urlencoded">
-            <label for="check-in">Check-in Date</label>
-            <input type="date" id="checkin" name="check-in" required>
-            <label for="check-out">Check-out Date</label>
-            <input type="date" id="checkout" name="check-out" required>
-            <label for="spaces-type">Space Type</label>
-            <select name="spaces-type" id="spaces-type" required>
+            <label for="checkIn">Check-in Date</label>
+            <input type="date" id="checkin" name="checkIn" required>
+            <label for="checkOut">Check-out Date</label>
+            <input type="date" id="checkout" name="checkOut" required>
+            <label for="spacesType">Space Type</label>
+            <select name="spacesType" id="spaces-type" required>
                 {{#each zone}}
                 <option id="option" value="{{name}}" data-max-spaces={{numOfZones}} data-max-people={{maxPeople}}>{{name}}</option>
                 {{/each}}
             </select>
-            <label for="space-no">Number of Spaces</label>
-            <input type="number" name="space-no" id="space-no" min="1" value="1" required>
-            <label for="people-no">Number of People</label>
-            <input type="number" id="people-no" name="peop-no" min="1" value="1" required>  
+            <label for="spaceNo">Number of Spaces</label>
+            <input type="number" name="spaceNo" id="space-no" min="1" value="1" required>
+            <label for="peopleNo">Number of People</label>
+            <input type="number" id="people-no" name="peopNo" min="1" value="1" required>  
             <input type="submit" id="search" value="Search">
         </form>
     </div>
-    {{#if result}}
+    {{#each result}}
         <div class="availability-result">
             <img src="/public/images/main_image.jpg" alt="camping">
             <p>Check-In: {{checkin}}<br>Check-Out: {{checkout}}<br>Space Type: {{spacetype}}<br>Number of Spaces: {{spacenum}}<br>Number of People: {{peoplenum}}<br>Total Price: {{price}}</p>
-        </div>
-    {{/if}}
+    {{/each}}
 </article>
