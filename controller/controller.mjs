@@ -71,7 +71,7 @@ async function reservation_search(req, res) {
     const {checkIn:checkin, checkOut:checkout, spacesType:spacetype, spaceNo:spacenum, peopNo:people} = req.body;
   
     console.log('Received data:', req.body);
-    console.log(people);
+    //console.log(people);
     let results = await calculate_total_price(checkin, checkout, people, spacenum, spacetype);
     let zones = await model.zone_client_info();
     res.render('reservation.hbs', {
