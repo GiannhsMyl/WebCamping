@@ -1,6 +1,10 @@
 import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
 import "dotenv/config";
+import * as model from '../model/model_better_sqlite.mjs';
+import calculate_total_price  from '../model/calculate_price.mjs';
+
+
 let reservations=[
 	{id:1,name:"John Doe",zone:"A",people:"5",checkIn:"2025-10-12",checkOut:"2025-10-12"},
 	{id:2,name:"John Hoe",zone:"C",people:"2",checkIn:"2025-05-05",checkOut:"2025-05-05"}
@@ -48,12 +52,39 @@ function contactPage(req,res){
 }
 
 
-function reservationPage(req,res){
+async function reservationPage(req,res){
+  try{
+    let zones = await model.zone_client_info();
     res.render('reservation.hbs', {
-    title: "reservation",
-    css: ["main_style.css", "reservation-style.css"], 
-    script : ["collapsed_menu.js", "reservation.js"]
-  });
+      title: "reservation",
+      css: ["main_style.css", "reservation-style.css"], 
+      script : ["collapsed_menu.js", "reservation.js"],
+      zone: zones
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function reservation_search(req, res) {
+  try {
+    const {checkin, checkout, spacetype, spacenum, people} = req.body;
+  
+    console.log('Received data:', req.body);
+    console.log(spacetype);
+    let results = await calculate_total_price(checkin, checkout, people, spacenum, spacetype);
+    let zones = await model.zone_client_info();
+    res.render('reservation.hbs', {
+      title: "reservation",
+      css: ["main_style.css", "reservation-style.css"], 
+      script : ["collapsed_menu.js", "reservation.js"],
+      zone: zones,
+      result: [{checkin: checkin, checkout: checkout, spacetype: spacetype, spacenum: spacenum, peoplenum: people, price: results}]
+    });
+  } catch (err) {
+    throw err;
+  }
+  
 }
 
 
@@ -166,4 +197,4 @@ function deleteReservation(req,res){
         res.send(`${reservation2Delete} doesnt exist`);
 }
 
-export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation};
+export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search};
