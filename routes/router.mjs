@@ -9,6 +9,7 @@ const router=express.Router();
 router.get("/",controller.mainPage);
 
 router.get("/reservation",controller.reservationPage);
+router.post("/reservation", controller.reservation_search)
 
 router.get("/contact",controller.contactPage);
 router.post("/new_contact_message",controller.sendContactMessage);
