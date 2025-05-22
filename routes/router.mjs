@@ -34,7 +34,10 @@ router.get("/admin/delete/:zone",controller.deleteZone);
 router.post("/admin/editReservations",controller.editReservations);
 router.get("/admin/deleteReservation/:reservation",controller.deleteReservation);
 
+router.post("/admin/getVisitors",controller.getVisitors);
+
 router.use((err,req,res,next)=>{
     res.render("error",{css : ["main_style.css","adminCustomerPage.css"],title:"error",message:err.message,errtrace:err.stack});
 });
+
 export {router}

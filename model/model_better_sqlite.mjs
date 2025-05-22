@@ -44,7 +44,11 @@ export function getAllZones(){
     return zones.all();
 }
 export function getAllReservations(){
-    const reservations=sql.prepare("SELECT V.firstName,V.lastName,V.email,R.people,R.checkIn,R.checkOut,R.totalPrice,R.zoneId,R.zoneType FROM (RESERVATION AS R JOIN VISITOR AS V ON R.visitorId=V.email)");
+    const reservations=sql.prepare("SELECT R.id,V.firstName,V.lastName,V.email,R.people,R.checkIn,R.checkOut,R.totalPrice,R.zoneId,R.zoneType FROM (RESERVATION AS R JOIN VISITOR AS V ON R.visitorId=V.email)");
     return reservations.all();
+}
+export function getAllVisitors(){
+    const visitors=sql.prepare("SELECT * FROM VISITOR");
+    return visitors.all();
 }
 export default (check_availability, zone_client_info);

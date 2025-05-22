@@ -1,11 +1,13 @@
 let reservations=[];
 let zones=[];
-
+let visitors=[];
 const dpr=window.devicePixelRatio;
 document.addEventListener("DOMContentLoaded",async ()=>{
 	console.log("main");
 	zones=await refreshZones();
 	reservations=await refreshReservations();
+	visitors=await refreshVisitors();	
+	console.log(reservations);
 	curCalMonth=(new Date()).getMonth();
 	makeCallendar(curCalMonth);
 	let yearSelect=document.querySelector("#yearSelect");
@@ -112,12 +114,12 @@ function addReservation(reserv,toggle=false){
 	let people=reserv.people;
 	let checkIn=reserv.checkIn;
 	let checkOut=reserv.checkOut;
-	if(toggle){
-		let nameInput=document.createElement("input");
-		nameInput.setAttribute("type","text");
-		nameInput.setAttribute("name","name");
-		nameInput.setAttribute("value",name);
-		nameColumn.appendChild(nameInput);
+	if(toggle){//this will appear when user has selected 'edit'
+		// let nameInput=document.createElement("input");
+		// nameInput.setAttribute("type","text");
+		// nameInput.setAttribute("name","name");
+		// nameInput.setAttribute("value",name);
+		// nameColumn.appendChild(nameInput);
 
 		let selectZone=document.createElement("select");
 		selectZone.setAttribute("name","zone");
@@ -152,24 +154,28 @@ function addReservation(reserv,toggle=false){
 		checkOutInput.setAttribute("name","checkOut");
 		checkOutInput.setAttribute("value",checkOut);
 		checkOutColumn.appendChild(checkOutInput);
-	}else{
-		let linkVisitor=document.createElement("a");
-		linkVisitor.setAttribute("href",`/visitor/${reserv.email}`);
-		linkVisitor.innerHTML=name;
-		nameColumn.appendChild(linkVisitor);
-		zoneColumn.innerHTML=zone;
-		peopleColumn.innerHTML=people;
-		checkInColumn.innerHTML=checkIn;
-		checkOutColumn.innerHTML=checkOut;
-	}
-	if(toggle){
+
 		let adel=document.createElement("a");
 		adel.setAttribute("href",`admin/deleteReservation/${reserv.id}`);
 		let deleteButton=document.createElement("button");
 		deleteButton.innerHTML="Διαγραφή";
 		adel.appendChild(deleteButton);
 		deleteColumn.appendChild(adel);
+	}else{//this will appear when edit is NOT selected
+
+		zoneColumn.innerHTML=zone;
+		peopleColumn.innerHTML=people;
+		checkInColumn.innerHTML=checkIn;
+		checkOutColumn.innerHTML=checkOut;
 	}
+	//this will appear regardless
+	
+	let linkVisitor=document.createElement("a");
+	linkVisitor.setAttribute("href",`/admin/visitors/id=${reserv.email}`);
+	linkVisitor.innerHTML=name;
+	nameColumn.appendChild(linkVisitor);
+	
+	//
 	row.appendChild(nameColumn);
 	row.appendChild(zoneColumn);
 	row.appendChild(peopleColumn);
@@ -446,4 +452,15 @@ async function refreshReservations() {
 	});
 	let reservations=await response.json();
 	return reservations;
+}
+
+async function refreshVisitors() {
+	const response=await fetch("admin/getVisitors",{
+		method:"POST",
+		headers:{
+			"Content-type":"application/json"
+		}
+	});
+	let visitors=await response.json();
+	return visitors;
 }
