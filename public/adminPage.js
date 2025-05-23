@@ -110,7 +110,7 @@ function addReservation(reserv,toggle=false){
 	let deleteColumn=document.createElement("td");
 
 	let name=`${reserv.firstName} ${reserv.lastName}`;
-	let zone=`${reserv.zoneType}-${reserv.zoneId}`;
+	let zone=`${reserv.zoneType}-${reserv.num}`;
 	let people=reserv.people;
 	let checkIn=reserv.checkIn;
 	let checkOut=reserv.checkOut;
