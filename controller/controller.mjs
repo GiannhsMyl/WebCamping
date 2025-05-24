@@ -197,14 +197,18 @@ function deleteReservation(req,res){
     else
         res.send(`${reservation2Delete} doesnt exist`);
 }
-function getVisitor(req,res){
+function getSpecificVisitor(req,res){
     let id=req.params.id;
-    console.log(id);
-    res.redirect("/admin#visitors");
+    res.send(model.getSpecificVisitor(id));
 
 }
 
 function getVisitors(req,res){
       res.send(model.getAllVisitors());
 }
-export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search,getVisitors};
+
+function searchVisitor(req,res){
+    let name=req.params.visitorName;
+    res.send(model.searchVisitor(name));
+}
+export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search,getVisitors,getSpecificVisitor,searchVisitor};

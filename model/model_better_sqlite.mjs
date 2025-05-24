@@ -20,7 +20,7 @@ export let zone_client_info = () => {
 export let check_availability = (checkin, checkout, people, spacenum, spacetype) => {
 
     const f1 = sql.prepare('SELECT maxPeople, numOfZones FROM ZONETYPE WHERE name = ?;');
-    const f2 = sql.prepare('SELECT SUM(zoneId) AS reservations FROM (SELECT DISTINCT zoneId FROM (RESERVATION JOIN RES_ZONE_NUM ON id=reservationId) WHERE ((checkIn <= ? AND checkOut > ?) OR (checkIn >= ? AND checkOut <= ?) OR (checkIn < ? AND checkOut >= ?)) AND zoneType = ? );');
+    const f2 = sql.prepare('SELECT SUM(zoneId) AS reservations FROM (SELECT DISTINCT zoneId FROM ((RESERVATION JOIN RES_ZONE_NUM ON RESERVATION.id=reservationId) JOIN ZONE ON ZONE.id=zoneId) WHERE ((checkIn <= ? AND checkOut > ?) OR (checkIn >= ? AND checkOut <= ?) OR (checkIn < ? AND checkOut >= ?)) AND zoneType = ? );');
     
     let maxnums;
     let reservations;
@@ -50,5 +50,34 @@ export function getAllReservations(){
 export function getAllVisitors(){
     const visitors=sql.prepare("SELECT * FROM VISITOR");
     return visitors.all();
+}
+
+export function getSpecificVisitor(id){
+    const visitor=sql.prepare("SELECT * FROM VISITOR WHERE email=?")
+    return visitor.get(id)
+}
+export function searchVisitor(name){
+    let searchName=name.split("_");
+    let searchEmail=name.split("@");
+    let result=[];
+    if(searchEmail.length===1){//search by name
+        if(searchName.length==2){//name is -> firstName LastName
+            let firstName=searchName[0];
+            let lastName=searchName[1];
+            const visitor=sql.prepare("SELECT * FROM VISITOR WHERE UPPER(firstName) LIKE UPPER(?) AND UPPER(lastName) LIKE UPPER(?)");
+            result=visitor.all(firstName,lastName);
+        }
+        if(searchName.length==1){//name is -> firstName or lastName
+            const visitor=sql.prepare("SELECT * FROM VISITOR WHERE UPPER(firstName) LIKE UPPER(?) OR  UPPER(lastName) LIKE UPPER(?)");
+            result=visitor.all(name,name);
+        }
+    }else{//search by email
+        let ans=getSpecificVisitor(name);
+        if(ans!=undefined)
+            result.push(ans);
+    }
+    if(result.length==0)
+        return [{}];
+    return result;
 }
 export default (check_availability, zone_client_info);

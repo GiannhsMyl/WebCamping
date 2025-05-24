@@ -113,3 +113,9 @@ button{
 	margin-right:5%;
 	flex-wrap:wrap;
 }
+td input[type="text"]{
+	width: 8em;
+}
+td a:visited{
+	color:blue;
+}

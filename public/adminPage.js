@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 	zones=await refreshZones();
 	reservations=await refreshReservations();
 	visitors=await refreshVisitors();	
-	console.log(reservations);
 	curCalMonth=(new Date()).getMonth();
 	makeCallendar(curCalMonth);
 	let yearSelect=document.querySelector("#yearSelect");
@@ -93,6 +92,9 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 	});
 	document.querySelector("#changeAvailabilityForm input[type=hidden]").value=new Date().toISOString().split("T")[0];
 	fillZoneTable();
+	fillVisitorsTable();
+
+	document.querySelector("#visitorSearch button").addEventListener("click",searchVisitor);
 });
 
 function addReservation(reserv,toggle=false){
@@ -171,7 +173,9 @@ function addReservation(reserv,toggle=false){
 	//this will appear regardless
 	
 	let linkVisitor=document.createElement("a");
-	linkVisitor.setAttribute("href",`/admin/visitors/id=${reserv.email}`);
+	linkVisitor.setAttribute("href","#visitors");
+	linkVisitor.setAttribute("data-email",reserv.email);
+	linkVisitor.addEventListener("click",getSpecificVisitor)
 	linkVisitor.innerHTML=name;
 	nameColumn.appendChild(linkVisitor);
 	
@@ -324,6 +328,7 @@ function fillZoneTable(){
 	let zoneTable=document.querySelector("#zoneManagement .table-list");
 	let trHead=document.createElement("tr");
 	for(let j in zones[0]){
+		if(j=="id") continue;
 		let temp=document.createElement("th");
 		temp.innerHTML=j;
 		trHead.appendChild(temp);
@@ -425,12 +430,67 @@ function fillZoneTable(){
 	for(let i=0;i<zones.length;i++){
 		let tr=document.createElement("tr");
 		for(let j in zones[i]){
+			if (j=="id") continue;
 			let td=document.createElement("td");
 			td.innerHTML=`${zones[i][j]}`
 			tr.appendChild(td);
 		}
 		tr.appendChild(document.createElement("td"));
 		zoneTable.appendChild(tr);
+	}
+}
+function fillVisitorsTable(){
+	let table=document.querySelector("#visitorList");
+	let visitorInfo=Object.keys(visitors[0]);
+	let trHead=document.createElement("tr");
+	for(let i=0;i<visitorInfo.length;i++){
+		let th=document.createElement("th");
+		th.innerHTML=visitorInfo[i];
+		trHead.appendChild(th);
+	}
+	let th=document.createElement("th");
+	let editButton=document.createElement("button");
+	editButton.innerHTML="Επεξεργασία";
+	editButton.addEventListener("click",()=>{
+		console.log("edit");
+	});
+	th.appendChild(editButton);
+	trHead.appendChild(th);
+	table.appendChild(trHead);
+	for(let i=0;i<visitors.length;i++){
+		let tr=document.createElement("tr");
+		for(let j=0;j<visitorInfo.length;j++){
+			let td=document.createElement("td");
+			td.innerHTML=visitors[i][visitorInfo[j]];
+			tr.appendChild(td);
+		}
+		let td=document.createElement("td");
+		tr.appendChild(td);
+		table.appendChild(tr);
+	}
+}
+function deleteVisitorTable(){
+	let children2delete=document.querySelector("#visitorList").children;
+	while(children2delete.length!==0){
+		children2delete[0].remove();
+	}
+}
+async function searchVisitor(){
+	let query=document.querySelector("#visitorSearchIn").value
+	if(query===""/* || query.split(" ").length!=2*/){
+		visitors=await refreshVisitors();
+		deleteVisitorTable();
+		fillVisitorsTable();
+	}else{
+		const resp=await fetch(`/admin/searchVisitors/${query.replace(" ","_")}`,{
+			method:"POST",
+			headers:{
+				"Content-type":"application/json"
+			}
+		});//work too do here
+		visitors=await resp.json();
+		deleteVisitorTable();
+		fillVisitorsTable();
 	}
 }
 async function refreshZones() {
@@ -443,6 +503,7 @@ async function refreshZones() {
 	let zones=await response.json(); 
 	return zones;
 }
+
 async function refreshReservations() {
 	const response=await fetch("admin/getReservations",{
 		method:"POST",
@@ -463,4 +524,18 @@ async function refreshVisitors() {
 	});
 	let visitors=await response.json();
 	return visitors;
+}
+async function getSpecificVisitor(event) {
+	let email=event.currentTarget.getAttribute("data-email");
+	const response=await fetch(`/admin/visitors/${email}`,{
+		method:"POST",
+		headers:{
+			"Content-type":"application/json"
+		}
+	});
+	let f=await response.json();
+	visitors=[];
+	visitors.push(f);//await response.json()
+	deleteVisitorTable();
+	fillVisitorsTable();
 }

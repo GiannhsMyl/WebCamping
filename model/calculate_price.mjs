@@ -17,6 +17,7 @@ export let calculate_total_price = (checkin, checkout, people, spacenum, spacety
     
     const f1 = sql.prepare('SELECT * FROM ZONETYPE WHERE name = ?;');
     const zoneData = f1.get(spacetype);
+    console.log(JSON.stringify(zoneData));
     if (!zoneData) {
         throw new Error("Ο τύπος χώρου δεν βρέθηκε");
     }
