@@ -16,7 +16,8 @@ let zones=[
 	{zone:"D",totalAvailability:"1",cost:"1"},
 ];
 zones=model.getAllZones();
-reservations=model.getAllReservations();
+let date=new Date();
+// reservations=model.getAllReservations(`${date.getFullYear()}-${(date.getMonth()+1)/10<1? ("0"+(date.getMonth()+1)):date.getMonth()+1}-${date.getDate()}`);
 const loadServices = async () => {
   try {
     const data = await fs.readFile('data/services.json', 'utf-8');
@@ -176,10 +177,11 @@ function deleteZone(req,res){
 
 }
 function getAllReservations(req,res){
+    reservations=model.getAllReservations(req.body.date);
     res.send(JSON.stringify(reservations));
 }
 function editReservations(req,res){
-    reservations=req.body;
+    model.updateReservation(req.body);
     res.send("reservations edited");
 }
 function deleteReservation(req,res){
@@ -211,4 +213,13 @@ function searchVisitor(req,res){
     let name=req.params.visitorName;
     res.send(model.searchVisitor(name));
 }
-export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search,getVisitors,getSpecificVisitor,searchVisitor};
+function getAvailabilities(req,res){//have to work with date first -- thelei douleia akoma :(
+    let date=req.body.date;
+    let results=[];
+    for(let i=0;i<zones.length;i++){
+      let zName=zones[i].name;
+      results.push({name:zName,availability:model.searchAdminAvailbility(date,zones[i].name).availability});
+    }
+    res.send(JSON.stringify(results));
+};
+export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search,getVisitors,getSpecificVisitor,searchVisitor,getAvailabilities};

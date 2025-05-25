@@ -72,12 +72,12 @@ export let check_availability = (checkin, checkout, people, spacenum, spacetype)
 
 
 export function getAllZones(){
-    const zones=sql.prepare("SELECT N.id,N.zoneType,T.defaultPeople,T.maxPeople,T.additionalChargePerPerson,T.highSeasonPrice,T.lowSeasonPrice,T.numOfZones FROM (ZONE AS N JOIN ZONETYPE AS T ON N.zoneType=T.name) ");
+    const zones=sql.prepare("SELECT * FROM ZONETYPE");
     return zones.all();
 }
-export function getAllReservations(){
-    const reservations=sql.prepare("SELECT R.id,V.firstName,V.lastName,V.email,R.people,R.checkIn,R.checkOut,R.totalPrice,Z.num,Z.zoneType FROM ((RESERVATION AS R JOIN VISITOR AS V ON R.visitorId=V.email) JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId)JOIN ZONE AS Z ON RZ.zoneId==Z.id");
-    return reservations.all();
+export function getAllReservations(date){
+    const reservations=sql.prepare("SELECT R.id,V.firstName,V.lastName,V.email,R.people,R.checkIn,R.checkOut,R.totalPrice,Z.num,Z.zoneType FROM ((RESERVATION AS R JOIN VISITOR AS V ON R.visitorId=V.email) JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId)JOIN ZONE AS Z ON RZ.zoneId==Z.id WHERE R.checkIn<=? AND R.checkOut>=?");
+    return reservations.all(date,date);
 }
 export function getAllVisitors(){
     const visitors=sql.prepare("SELECT * FROM VISITOR");
@@ -89,6 +89,9 @@ export function getSpecificVisitor(id){
     return visitor.get(id)
 }
 export function searchVisitor(name){
+    if(name.match("[A-Za-z0-9]+@[A-Za-z0-9]+\\.[A-Za-z0-9]+")===null && name.match("[A-Za-z0-9]+ [A-Za-z0-9]+")===null && name.match("[A-Za-z0-9]+")===null){
+        return [{}];
+    }
     let searchName=name.split("_");
     let searchEmail=name.split("@");
     let result=[];
@@ -108,9 +111,22 @@ export function searchVisitor(name){
         if(ans!=undefined)
             result.push(ans);
     }
-    if(result.length==0)
-        return [{}];
     return result;
+}
+export function searchAdminAvailbility(date,zoneType){
+    const avail=sql.prepare("SELECT COUNT(*) AS availability FROM ((RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId)JOIN ZONE AS Z ON Z.id=RZ.zoneId) WHERE Z.zoneType=? AND R.checkIn<=? AND R.checkOut>=?");
+    return avail.get(zoneType,date,date);
+}
+
+export function updateReservation(reservations){
+    const resUp=sql.prepare("UPDATE RESERVATION SET people=?,checkIn=?,checkOut=? WHERE Id=?");
+    const reszonenumUp=sql.prepare("UPDATE RES_ZONE_NUM SET zoneId=? WHERE reservationId=?");
+    for(let i=0;i<reservations.length;i++){
+        resUp.run(reservations[i].people,reservations[i].checkIn,reservations[i].checkOut,reservations[i].id);
+        const zoneIdq=sql.prepare("SELECT Z.id FROM ZONE AS Z WHERE zoneType=? AND num=?");
+        let zoneId=zoneIdq.get(reservations[i].zone,reservations[i].zoneNum);
+        reszonenumUp.run(zoneId.id,reservations[i].id); 
+    }
 }
 export default (check_availability, zone_client_info);
 

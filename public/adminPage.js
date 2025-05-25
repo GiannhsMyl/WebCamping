@@ -4,17 +4,17 @@ let visitors=[];
 const dpr=window.devicePixelRatio;
 document.addEventListener("DOMContentLoaded",async ()=>{
 	console.log("main");
+	curCalMonth=(new Date()).getMonth();
+	makeCallendar(curCalMonth);
 	zones=await refreshZones();
 	reservations=await refreshReservations();
 	visitors=await refreshVisitors();	
-	curCalMonth=(new Date()).getMonth();
-	makeCallendar(curCalMonth);
 	let yearSelect=document.querySelector("#yearSelect");
-	document.querySelector(".callendarLtButton").addEventListener("click",()=>{
+	document.querySelector(".callendarLtButton").addEventListener("click",async ()=>{
 		if(curCalMonth>0)
 			makeCallendar(--curCalMonth,yearSelect.value);
 	});
-	document.querySelector(".callendarGtButton").addEventListener("click",()=>{
+	document.querySelector(".callendarGtButton").addEventListener("click",async ()=>{
 		if(curCalMonth<11)
 			makeCallendar(++curCalMonth),yearSelect.value;
 	});
@@ -65,6 +65,9 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 				console.log(`response:${answer}`)
 				console.log(editedReservations);
 				alert("Οι αλλαγές αποθηκεύτηκαν!");
+				reservations=await refreshReservations();
+				deleteTable("#reservationList>tr");
+				fillReservations();
 			});
 			parentDiv.appendChild(saveButton);
 		}else{
@@ -81,9 +84,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 			document.querySelector("#addZone").style.display="block";
 		}
 	});
-	for(let i=0;i<reservations.length;i++){
-		addReservation(reservations[i]);
-	}
+	fillReservations();
 	fillAvailability();
 	document.querySelector("#changeAvailabilityForm input[type=submit]").addEventListener("click",()=>{
 		let d=(new Date()).toDateString;
@@ -111,6 +112,7 @@ function addReservation(reserv,toggle=false){
 	
 	let deleteColumn=document.createElement("td");
 
+	let id=reserv.id;
 	let name=`${reserv.firstName} ${reserv.lastName}`;
 	let zone=`${reserv.zoneType}-${reserv.num}`;
 	let people=reserv.people;
@@ -127,23 +129,66 @@ function addReservation(reserv,toggle=false){
 		selectZone.setAttribute("name","zone");
 		let zoneList= [];
 		for(let i=0;i<zones.length;i++)
-			zoneList.push(zones[i].zone);
+			zoneList.push(zones[i].name);
 		// console.log(zoneList);
+		let maxNumZones=0;
 		for(let i=0;i<zoneList.length;i++){
 			let tempOption=document.createElement("option");
 			tempOption.setAttribute("value",zoneList[i]);
 			tempOption.innerHTML=zoneList[i];
-			if(zoneList[i]==zone)
+			if(zoneList[i]==zone.split("-")[0]){
 				tempOption.setAttribute("selected","");
+				maxNumZones=zones[i].numOfZones;
+			}
 			selectZone.appendChild(tempOption);
 		}
+		selectZone.addEventListener("change",(event)=>{
+			let idSelect=document.querySelector("#reservationList select[name=zoneNum]");
+			deleteTable("#reservationList select[name=id] option");
+			let max=0;
+			
+			for(let i=0;i<zones.length;i++){
+				if(zones[i].name==event.target.value){
+					max=zones[i].numOfZones;
+				}
+			}
+			console.log(`${max}`)
+			for(let i=1;i<max+1;i++){
+				let tempOption=document.createElement("option");
+				tempOption.setAttribute("value",i);
+				tempOption.innerHTML=i;
+				if(i===1)
+					tempOption.setAttribute("selected","");
+				idSelect.appendChild(tempOption);
+			}
+		});
+		let op=document.createElement("select");
+		op.setAttribute("name","zoneNum")
+		console.log(maxNumZones);
+		for(let i=1;i<maxNumZones+1;i++){
+			let tempOption=document.createElement("option");
+			tempOption.setAttribute("value",i);
+			tempOption.innerHTML=i;
+			if(zone.split("-")[1]===i)
+				tempOption.setAttribute("selected","");
+			op.appendChild(tempOption);
+		}
 		zoneColumn.appendChild(selectZone);
+		zoneColumn.appendChild(op);
+
 
 		let numberInput=document.createElement("input");
 		numberInput.setAttribute("type","number");
 		numberInput.setAttribute("name","people");
 		numberInput.setAttribute("value",people);
 		peopleColumn.appendChild(numberInput);
+
+		let idInput=document.createElement("input");
+		idInput.setAttribute("type","hidden");
+		idInput.setAttribute("name","id");
+		idInput.setAttribute("value",id);
+		nameColumn.appendChild(idInput);
+
 
 		let checkInInput=document.createElement("input");
 		checkInInput.setAttribute("type","date");
@@ -210,7 +255,7 @@ function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MA
 	calHeader=document.querySelector(".callendarHeader");
 	calBox.innerHTML="";//resets Callendar
 	// monthText=document.createElement("span");
-	monthText=["ΙΑΝΟΥΑΡΙΟΣ","ΦΕΒΡΟΥΑΡΙΟΣ","ΜΑΡΤΙΟΣ","ΑΠΡΙΛΙΟΣ","ΜΑΙΟΣ","ΙΟΥΝΙΟΣ","ΙΟΥΛΙΟΣ","ΑΥΓΟΥΣΤΟΣ","ΣΕΠΤΕΜΒΡΙΟΣ","ΟΚΤΟΒΡΙΟΣ","ΜΟΕΜΒΡΙΟΣ","¨ΔΕΚΕΜΒΡΙΟΣ"];
+	monthText=["ΙΑΝΟΥΑΡΙΟΣ","ΦΕΒΡΟΥΑΡΙΟΣ","ΜΑΡΤΙΟΣ","ΑΠΡΙΛΙΟΣ","ΜΑΙΟΣ","ΙΟΥΝΙΟΣ","ΙΟΥΛΙΟΣ","ΑΥΓΟΥΣΤΟΣ","ΣΕΠΤΕΜΒΡΙΟΣ","ΟΚΤΟΒΡΙΟΣ","ΝΟΕΜΒΡΙΟΣ","ΔΕΚΕΜΒΡΙΟΣ"];
 	dayText=["ΚΥΡ","ΔΕΥ","ΤΡΙ","ΤΕΤ","ΠΕΜ","ΠΑΡ","ΣΑΒ"];
 	calHeaderTitle.innerHTML=monthText[month] +" "+ year;
 	for(let i=0;i<7;i++){
@@ -222,13 +267,14 @@ function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MA
 	for(let i=1;i<daysInMonth+1+tempDate;i++){
 		let temp=document.createElement("div");
 		if(i>tempDate){
-			temp.setAttribute("data-date",`${year}-${month+1}-${i-tempDate}`);
+			temp.setAttribute("data-date",`${year}-${((month+1)/10<1)? ("0"+(month+1)):(month+1)}-${i-tempDate}`);
 			temp.innerHTML=i-tempDate;
 			if(isToday(new Date(`${year}-${month+1}-${i-tempDate}`))){
 				temp.classList.add("today");
 			}
-			temp.addEventListener("click",(event)=>{
-				let date=new Date(event.currentTarget.getAttribute("data-Date"));
+			temp.addEventListener("click",async (event)=>{
+				let dateAttr=event.currentTarget.getAttribute("data-Date")
+				let date=new Date(dateAttr);
 				document.querySelector("#changeAvailabilityForm input[type=hidden]").value=`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
 				if(temp.classList.contains("today")){
 					document.querySelector("#reservation>h3").innerHTML=`Κρατήσεις Σήμερα`;
@@ -239,6 +285,13 @@ function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MA
 					document.querySelector("#reservation>h3").innerHTML=(date.getFullYear()===(new Date()).getFullYear())? `Κρατήσεις ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]}` : `Κρατήσεις ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]} ${date.getFullYear()}`;
 					document.querySelector("#availability>h3").innerHTML=(date.getFullYear()===(new Date()).getFullYear())? `Διαθεσιμότητα ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]}` : `Διαθεσιμότητα ${dayText[date.getDay()]} ${date.getDate()} ${monthText[date.getMonth()]} ${date.getFullYear()}`;		
 				}
+				
+				reservations=await refreshReservations(dateAttr);
+				deleteTable("#reservationList>tr");
+				fillReservations();
+				deleteTable("#availabilityTable>tr");
+				deleteTable("#canvasContainer>div");
+				fillAvailability(dateAttr);
 				window.location.href ="#reservation";
 			});
 		}
@@ -271,37 +324,49 @@ function isLeapYear(year){
 function makePie(canvas,con,max){
 	let ctx=canvas.getContext("2d");
 	let point={x:canvas.width/(2*dpr),y:canvas.height/(2*dpr)};
-	ctx.fillStyle="#54C774";
 	ctx.scale(dpr,dpr);
-	ctx.beginPath();
-	ctx.moveTo(point.x,point.y)
-	ctx.arc(point.x,point.y,point.y-10,0,-con/max*2*Math.PI,true);
-	ctx.lineTo(point.x,point.y);
-	ctx.closePath();
-	ctx.fill();
-	ctx.stroke();
+	if(con!==0){
+	ctx.fillStyle="#54C774";
+		ctx.beginPath();
+		ctx.moveTo(point.x,point.y)
+		ctx.arc(point.x,point.y,point.y-10,0,-con/max*2*Math.PI,true);
+		ctx.lineTo(point.x,point.y);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+	}
 
-
-	ctx.fillStyle="#C75454";
-	ctx.beginPath();
-	ctx.moveTo(point.x,point.y)
-	ctx.arc(point.x,point.y,point.y-10,0,-(con/max)*2*Math.PI,false);
-	ctx.lineTo(point.x,point.y);
-	ctx.closePath();
-	ctx.fill();
-	ctx.stroke();
+	if(con!==max){
+		ctx.fillStyle="#C75454";
+		ctx.beginPath();
+		ctx.moveTo(point.x,point.y)
+		ctx.arc(point.x,point.y,point.y-10,0,(con===0)? 2*Math.PI:-(con/max)*2*Math.PI,false);
+		ctx.lineTo(point.x,point.y);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+	}
 }
-function fillAvailability(){
+async function fillAvailability(date=document.querySelector(".today").getAttribute("data-date")){
 	let pieContainer=document.querySelector("#canvasContainer");
 	let availabilityTable=document.querySelector("#availability>.table-list");
+	let availabilities=await fetch("/admin/getAvailabilities",{
+		method:"POST",
+		headers:{
+			"Content-Type":"Application/json"
+		},
+		body:JSON.stringify({"date":date})
+	});
+	let availArr=await availabilities.json();
+
 	for(let i=0;i<zones.length;i++){
 		let div=document.createElement("div");
 		div.setAttribute("align","center");
 		let canvas=document.createElement("canvas");
-		canvas.setAttribute("id",`pie-${zones[i].zone}`);
+		canvas.setAttribute("id",`pie-${zones[i].name}`);
 		div.appendChild(canvas);
 		let p=document.createElement("p");
-		p.innerHTML=`Ζώνη ${zones[i].zone}`;
+		p.innerHTML=`Ζώνη ${zones[i].name}`;
 		div.appendChild(p);
 		pieContainer.appendChild(div);
 
@@ -311,14 +376,14 @@ function fillAvailability(){
 		canvas.style.width=`${rect.width}px`
 		canvas.style.height=`${rect.height}px`;
 
-		let avail=Math.random();
-		canvas.setAttribute("title",`Zώνη ${zones[i].zone} - ${avail}/${zones[i].totalAvailability}`)
-		makePie(canvas,avail,1);
+		let avail=availArr[i].availability;
+		canvas.setAttribute("title",`Zώνη ${zones[i].name} - ${avail}/${zones[i].numOfZones}`)
+		makePie(canvas,avail,zones[i].numOfZones);
 
 		let tr=document.createElement("tr");
 		for(let j=0;j<2;j++){
 			let td=document.createElement("td");
-			td.innerHTML=(j==0)? zones[i].zone:avail;
+			td.innerHTML=(j==0)? zones[i].name:avail;
 			tr.appendChild(td);
 		}
 		availabilityTable.appendChild(tr);
@@ -475,6 +540,17 @@ function deleteVisitorTable(){
 		children2delete[0].remove();
 	}
 }
+function deleteTable(tableSelector){
+	let tr2delete=document.querySelectorAll(tableSelector);
+	for(let i=0;i<tr2delete.length;i++){
+		tr2delete[i].remove();
+	}
+}
+function fillReservations(){
+	for(let i=0;i<reservations.length;i++){
+		addReservation(reservations[i]);
+	}
+}
 async function searchVisitor(){
 	let query=document.querySelector("#visitorSearchIn").value
 	if(query===""/* || query.split(" ").length!=2*/){
@@ -487,7 +563,7 @@ async function searchVisitor(){
 			headers:{
 				"Content-type":"application/json"
 			}
-		});//work too do here
+		});
 		visitors=await resp.json();
 		deleteVisitorTable();
 		fillVisitorsTable();
@@ -504,12 +580,13 @@ async function refreshZones() {
 	return zones;
 }
 
-async function refreshReservations() {
+async function refreshReservations(date=document.querySelector(".today").getAttribute("data-date")) {
 	const response=await fetch("admin/getReservations",{
 		method:"POST",
-	headers:{
-		"Content-type":"application/json"
-	}
+		headers:{
+			"Content-type":"application/json"
+		},
+		body:JSON.stringify({"date":date}),
 	});
 	let reservations=await response.json();
 	return reservations;

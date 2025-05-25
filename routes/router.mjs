@@ -38,6 +38,8 @@ router.post("/admin/getVisitors",controller.getVisitors);
 router.post("/admin/visitors/:id",controller.getSpecificVisitor);
 router.post("/admin/searchVisitors/:visitorName",controller.searchVisitor);
 
+router.post("/admin/getAvailabilities",controller.getAvailabilities);
+
 
 
 
