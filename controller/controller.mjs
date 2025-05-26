@@ -15,7 +15,6 @@ let zones=[
 	{zone:"C",totalAvailability:"1",cost:"1"},
 	{zone:"D",totalAvailability:"1",cost:"1"},
 ];
-zones=model.getAllZones();
 let date=new Date();
 // reservations=model.getAllReservations(`${date.getFullYear()}-${(date.getMonth()+1)/10<1? ("0"+(date.getMonth()+1)):date.getMonth()+1}-${date.getDate()}`);
 const loadServices = async () => {
@@ -155,26 +154,17 @@ function addZone(req,res){
 }
 function editZone(req,res){
     zones=req.body;
+    model.editZoneType(zones);
     res.send("all fine");
 }
 function getAllZones(req,res){
+    zones=model.getAllZones();
     res.send(JSON.stringify(zones));
 }
 function deleteZone(req,res){
-    let zone2Delete=req.params.zone;
-    let temp=undefined;
-    for(let i=0;i<zones.length;i++){
-      if(zones[i].zone==zone2Delete){
-        temp=zones[i];
-        zones.splice(i,1);
-        break;
-      }
-    }
-    if(temp!==undefined)
-        res.redirect("/admin");
-    else
-        res.send(`${zone2Delete} doesnt exist`);
-
+    let zone2Delete=req.params.zone.replace("_"," ");
+    model.deleteZoneType(zone2Delete);
+    res.redirect("/admin");
 }
 function getAllReservations(req,res){
     reservations=model.getAllReservations(req.body.date);
@@ -186,18 +176,8 @@ function editReservations(req,res){
 }
 function deleteReservation(req,res){
   let reservation2Delete=req.params.reservation;
-  let temp=undefined;
-  for(let i=0;i<reservations.length;i++){
-      if(reservations[i].id==reservation2Delete){
-        temp=reservations[i];
-        reservations.splice(i,1);
-        break;
-      }
-    }
-    if(temp!==undefined)
-        res.redirect("/admin");
-    else
-        res.send(`${reservation2Delete} doesnt exist`);
+  model.removeReservation(reservation2Delete);
+  res.redirect("/admin");
 }
 function getSpecificVisitor(req,res){
     let id=req.params.id;
@@ -213,13 +193,23 @@ function searchVisitor(req,res){
     let name=req.params.visitorName;
     res.send(model.searchVisitor(name));
 }
-function getAvailabilities(req,res){//have to work with date first -- thelei douleia akoma :(
+function getAvailabilities(req,res){
     let date=req.body.date;
     let results=[];
     for(let i=0;i<zones.length;i++){
       let zName=zones[i].name;
-      results.push({name:zName,availability:model.searchAdminAvailbility(date,zones[i].name).availability});
+      results.push({name:zName,availability:model.searchAdminAvailbility(date,zones[i].name)});
     }
     res.send(JSON.stringify(results));
 };
+export function editVisitors(req,res){
+    let visitors=req.body;
+    model.editVisitors(visitors);
+    res.send("ok");
+}
+export function deleteVisitor(req,res){
+    let visitor2Delete=req.params.email;
+    model.deleteVisitor(visitor2Delete);
+    res.redirect("/admin");
+}
 export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search,getVisitors,getSpecificVisitor,searchVisitor,getAvailabilities};

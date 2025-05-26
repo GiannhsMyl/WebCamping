@@ -29,7 +29,7 @@ router.post("/admin/editZone",controller.editZone);
 router.post("/admin/getZones",controller.getAllZones);
 router.post("/admin/getReservations",controller.getAllReservations);
 
-router.get("/admin/delete/:zone",controller.deleteZone);
+router.get("/admin/deleteZoneType/:zone",controller.deleteZone);
 
 router.post("/admin/editReservations",controller.editReservations);
 router.get("/admin/deleteReservation/:reservation",controller.deleteReservation);
@@ -37,6 +37,9 @@ router.get("/admin/deleteReservation/:reservation",controller.deleteReservation)
 router.post("/admin/getVisitors",controller.getVisitors);
 router.post("/admin/visitors/:id",controller.getSpecificVisitor);
 router.post("/admin/searchVisitors/:visitorName",controller.searchVisitor);
+router.post("/admin/editVisitors",controller.editVisitors);
+router.get("/admin/deleteVisitor/:email",controller.deleteVisitor);
+
 
 router.post("/admin/getAvailabilities",controller.getAvailabilities);
 
@@ -44,7 +47,12 @@ router.post("/admin/getAvailabilities",controller.getAvailabilities);
 
 
 router.use((err,req,res,next)=>{
-    res.render("error",{css : ["main_style.css","adminCustomerPage.css"],title:"error",message:err.message,errtrace:err.stack});
+    res.render("error.hbs",{
+        css : ["main_style.css","adminCustomerPage.css"],
+        title:"error",
+        message:err.message,
+        errtrace:err.stack
+        });
 });
 
 export {router}

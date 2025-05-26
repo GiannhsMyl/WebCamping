@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 				console.log(`response:${answer}`)
 				console.log(editedReservations);
 				alert("Οι αλλαγές αποθηκεύτηκαν!");
+				document.querySelector("#reservation .saveButton").remove();
 				reservations=await refreshReservations();
 				deleteTable("#reservationList>tr");
 				fillReservations();
@@ -326,7 +327,7 @@ function makePie(canvas,con,max){
 	let point={x:canvas.width/(2*dpr),y:canvas.height/(2*dpr)};
 	ctx.scale(dpr,dpr);
 	if(con!==0){
-	ctx.fillStyle="#54C774";
+		ctx.fillStyle="#54C774";
 		ctx.beginPath();
 		ctx.moveTo(point.x,point.y)
 		ctx.arc(point.x,point.y,point.y-10,0,-con/max*2*Math.PI,true);
@@ -422,7 +423,7 @@ function fillZoneTable(){
 					temp[i-1]={};
 					let inp=zoneList[i].querySelectorAll("input");
 					for(let j=0;j<inp.length;j++){
-						temp[i-1][head[j].innerHTML]=inp[j].value;
+						temp[i-1][inp[j].getAttribute("name")]=inp[j].value;
 					}
 					console.log(temp[i-1]);
 				}
@@ -436,6 +437,13 @@ function fillZoneTable(){
 				let answer=await response.text();
 				console.log(`response:${answer}`)
 				alert("Οι αλλαγές αποθηκεύτηκαν!");
+				deleteTable("#zoneList tr");
+				deleteTable("#canvasContainer>div");
+				deleteTable("#availabilityTable>tr");
+				zones=await refreshZones();
+				fillZoneTable();
+				fillAvailability();
+
 			});
 			parentDiv.appendChild(saveButton);
 			let zoneList=document.querySelectorAll("#zoneList tr");
@@ -450,13 +458,20 @@ function fillZoneTable(){
 					input.setAttribute("type","text");
 					input.setAttribute("value",temp[j].innerHTML);
 					td.appendChild(input);
+					if(head[j].innerHTML=="name"){
+						let hidden=document.createElement("input");
+						hidden.setAttribute("type","hidden");
+						hidden.setAttribute("name","ogname");
+						hidden.value=temp[j].innerHTML;
+						td.appendChild(hidden);
+					}
 					tr.appendChild(td);
 					// console.log(`${head[j].innerHTML} : ${temp[j].innerHTML}`)
 				}
 				let delButton=document.createElement("button");
 				// delButton.setAttribute(,);
 				let adel=document.createElement("a");//not-the-singer
-				adel.setAttribute("href",`admin/delete/${temp[0].innerHTML}`);
+				adel.setAttribute("href",`/admin/deleteZoneType/${temp[0].innerHTML.replace(" ","_")}`);
 				delButton.innerHTML="Διαγραφή";
 				let delTd=document.createElement("td");
 				adel.appendChild(delButton)
@@ -516,8 +531,86 @@ function fillVisitorsTable(){
 	let th=document.createElement("th");
 	let editButton=document.createElement("button");
 	editButton.innerHTML="Επεξεργασία";
-	editButton.addEventListener("click",()=>{
-		console.log("edit");
+	editButton.setAttribute("data-edit",false);
+	editButton.addEventListener("click",(event)=>{
+		let toggle=event.target.getAttribute("data-edit")=="false"? false :true;
+		event.target.setAttribute("data-edit",!toggle);
+		let table=document.querySelectorAll("#visitorList tr");
+		let thead=table[0].querySelectorAll("th");
+		deleteTable("#visitorList tr:not(:first-child)")
+		let id;
+		for(let i=1;i<table.length;i++){
+			let temptr=document.createElement("tr");
+			let localtr=table[i].querySelectorAll("td");
+			let j;
+			for(j=0;j<localtr.length-2;j++){
+				let temptd=document.createElement("td");
+				if(!toggle){
+					let tempInp=document.createElement("input");
+					tempInp.setAttribute("name",thead[j].innerHTML);
+					tempInp.setAttribute("type","text");
+					tempInp.setAttribute("value",localtr[j].innerHTML);
+					temptd.appendChild(tempInp);
+					if(thead[j].innerHTML=="email"){
+						let hidden=document.createElement("input");
+						hidden.setAttribute("type","hidden");
+						hidden.setAttribute("name","ogEmail");
+						id=localtr[j].innerHTML;
+						hidden.value=localtr[j].innerHTML;
+						temptd.appendChild(hidden);
+					}
+				}else{
+					temptd.innerHTML=localtr[j].querySelector("input").value;
+				}
+				temptr.appendChild(temptd);
+			}
+			let temptd=document.createElement("td");
+			temptd.innerHTML=localtr[j].innerHTML;
+			temptr.appendChild(temptd);
+			let temptd2=document.createElement("td");
+			if(!toggle){
+				let deleteButton=document.createElement("button");
+				deleteButton.innerHTML="Διαγραφή";
+				let adel=document.createElement("a");
+				adel.setAttribute("href",`/admin/deleteVisitor/${id}`);
+				adel.appendChild(deleteButton);
+				temptd2.appendChild(adel);
+			}
+			temptr.appendChild(temptd2);
+			document.querySelector("#visitorList").appendChild(temptr);
+		}
+		if(!toggle){
+			let saveButton=document.createElement("button");
+			saveButton.innerHTML="Αποθήκευση αλλαγών";
+			saveButton.addEventListener("click",async ()=>{
+				let table=document.querySelectorAll("#visitorList tr");
+				let vis=[];
+				for(let i=1;i<table.length;i++){
+					let inp=table[i].querySelectorAll("input");
+					let tempVisitor={};
+					for(let j=0;j<inp.length;j++){
+						tempVisitor[inp[j].getAttribute("name")]=inp[j].value;
+					}
+					vis.push(tempVisitor);
+				}
+				const response=await fetch("/admin/editVisitors",{
+					method:"POST",
+					headers:{
+					"Content-type":"application/json"
+					},
+					body:JSON.stringify(vis)
+				});
+				// let vitor=await response.json();
+				deleteTable("#visitorList tr");
+				visitors=await refreshVisitors();
+				document.querySelector("#visitors>button").remove();
+				fillVisitorsTable();
+			});
+			document.querySelector("#visitors").appendChild(saveButton);
+		}else{
+			document.querySelector("#visitors>button").remove();
+		}
+		// deleteTable("#visitorList tr:not(:first-child)");
 	});
 	th.appendChild(editButton);
 	trHead.appendChild(th);
@@ -565,7 +658,11 @@ async function searchVisitor(){
 			}
 		});
 		visitors=await resp.json();
-		deleteVisitorTable();
+		if(visitors.length==0)
+			deleteTable("#visitorList tr:not(:first-child)");
+		else
+			deleteTable("#visitorList tr");
+
 		fillVisitorsTable();
 	}
 }

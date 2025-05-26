@@ -80,8 +80,13 @@ export function getAllReservations(date){
     return reservations.all(date,date);
 }
 export function getAllVisitors(){
-    const visitors=sql.prepare("SELECT * FROM VISITOR");
-    return visitors.all();
+    const visitorsQ=sql.prepare("SELECT * FROM VISITOR");
+    let count=sql.prepare("SELECT COUNT(*) AS totalReservations FROM VISITOR AS V JOIN RESERVATION AS R ON v.email=R.visitorId WHERE v.email=?");
+    let visitors=visitorsQ.all();
+    for(let i=0;i<visitors.length;i++){
+        Object.assign(visitors[i],count.get(visitors[i].email));
+    }
+    return visitors;
 }
 
 export function getSpecificVisitor(id){
@@ -114,8 +119,9 @@ export function searchVisitor(name){
     return result;
 }
 export function searchAdminAvailbility(date,zoneType){
-    const avail=sql.prepare("SELECT COUNT(*) AS availability FROM ((RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId)JOIN ZONE AS Z ON Z.id=RZ.zoneId) WHERE Z.zoneType=? AND R.checkIn<=? AND R.checkOut>=?");
-    return avail.get(zoneType,date,date);
+    const reserved=sql.prepare("SELECT COUNT(*) AS availability FROM ((RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId)JOIN ZONE AS Z ON Z.id=RZ.zoneId) WHERE Z.zoneType=? AND R.checkIn<=? AND R.checkOut>=?");
+    const max=sql.prepare("SELECT numOfZones FROM ZONETYPE WHERE name=?");
+    return max.get(zoneType).numOfZones-reserved.get(zoneType,date,date).availability;
 }
 
 export function updateReservation(reservations){
@@ -126,6 +132,32 @@ export function updateReservation(reservations){
         const zoneIdq=sql.prepare("SELECT Z.id FROM ZONE AS Z WHERE zoneType=? AND num=?");
         let zoneId=zoneIdq.get(reservations[i].zone,reservations[i].zoneNum);
         reszonenumUp.run(zoneId.id,reservations[i].id); 
+    }
+}
+export function removeReservation(id){
+    const delRZ=sql.prepare("DELETE FROM RES_ZONE_NUM WHERE reservationId=?");
+    const delRe=sql.prepare("DELETE FROM RESERVATION WHERE id=?");
+    delRZ.run(id);
+    delRe.run(id);
+}
+export function editVisitors(visitors){
+    const visUp=sql.prepare("UPDATE VISITOR SET email=?,telephone=?,firstName=?,lastName=? WHERE email=?");
+    for(let i=0;visitors.length;i++){
+        visUp.run(visitors[i].email,visitors[i].telephone,visitors[i].firstName,visitors[i].lastName,visitors[i].ogEmail);
+    }
+}
+export function deleteVisitor(email){
+    const deleteYa=sql.prepare("DELETE FROM VISITOR WHERE email=?");
+    deleteYa.run(email);
+}
+export function deleteZoneType(zone){
+    const deleteType=sql.prepare("DELETE FROM ZONETYPE WHERE name=?");
+    deleteType.run(zone);
+}
+export function editZoneType(zoneTypes){
+    const ztUp=sql.prepare("UPDATE ZONETYPE SET name=?,defaultPeople=?,maxPeople=?,additionalChargePerPerson=?,highSeasonPrice=?,lowSeasonPrice=?,numOfZones=? WHERE name=?");
+    for(let i=0;zoneTypes.length;i++){
+        ztUp.run(zoneTypes[i].name,zoneTypes[i].defaultPeople,zoneTypes[i].maxPeople,zoneTypes[i].additionalChargePerPerson,zoneTypes[i].highSeasonPrice,zoneTypes[i].lowSeasonPrice,zoneTypes[i].numOfZones,zoneTypes[i].ogname);
     }
 }
 export default (check_availability, zone_client_info);
