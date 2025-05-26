@@ -7,17 +7,19 @@ const sql = db('model/database.db', {fileMustExist: true});
 
 
 export let calculate_total_price = (checkin, checkout, people, spacenum, spacetype) => {
-   
+    let totalPrice;
     const availability = model.check_availability(checkin, checkout, people, spacenum, spacetype);
-    console.log(parseInt(availability), typeof(availability));
+    //console.log(parseInt(availability), typeof(availability), availability);
     if (availability === 0) {
-        throw new Error("Δεν υπάρχει διαθεσιμότητα για τις επιλεγμένες παραμέτρους");
+        totalPrice = "Δεν υπάρχει διαθεσιμότητα για τις επιλεγμένες παραμέτρους";
+        return totalPrice;
+        //throw new Error("Δεν υπάρχει διαθεσιμότητα για τις επιλεγμένες παραμέτρους");
     }
 
     
     const f1 = sql.prepare('SELECT * FROM ZONETYPE WHERE name = ?;');
     const zoneData = f1.get(spacetype);
-    console.log(JSON.stringify(zoneData));
+    //console.log(JSON.stringify(zoneData));
     if (!zoneData) {
         throw new Error("Ο τύπος χώρου δεν βρέθηκε");
     }
@@ -40,7 +42,7 @@ export let calculate_total_price = (checkin, checkout, people, spacenum, spacety
     
     const basePriceHigh = parseFloat(zoneData.highSeasonPrice) * highSeasonDays * spacenum;
     const basePriceLow = parseFloat(zoneData.lowSeasonPrice) * lowSeasonDays * spacenum;
-    let totalPrice = basePriceHigh + basePriceLow;
+    totalPrice = basePriceHigh + basePriceLow;
 
     
     const defaultPeople = parseInt(zoneData.defaultPeople);
