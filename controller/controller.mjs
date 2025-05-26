@@ -149,7 +149,7 @@ function adminPage(req,res){
 }
 
 function addZone(req,res){
-    zones.push(req.body);
+    model.addZoneType(req.body);
     res.redirect("/admin");
 }
 function editZone(req,res){

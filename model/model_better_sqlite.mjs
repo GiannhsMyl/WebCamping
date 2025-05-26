@@ -160,5 +160,15 @@ export function editZoneType(zoneTypes){
         ztUp.run(zoneTypes[i].name,zoneTypes[i].defaultPeople,zoneTypes[i].maxPeople,zoneTypes[i].additionalChargePerPerson,zoneTypes[i].highSeasonPrice,zoneTypes[i].lowSeasonPrice,zoneTypes[i].numOfZones,zoneTypes[i].ogname);
     }
 }
+export function addZoneType(zone){
+    const zIns=sql.prepare("INSERT INTO ZONETYPE VALUES(?,?,?,?,?,?,?)");
+    zIns.run(zone.name,zone.defaultPeople,zone.maxPeople,zone.additionalChargePerPerson,zone.highSeasonPrice,zone.lowSeasonPrice,zone.numOfZones);
+    const lastZoneId=sql.prepare("SELECT MAX(id) AS lastZoneId FROM ZONE");
+    const zoneIns=sql.prepare("INSERT INTO ZONE VALUES(?,?,?)");
+    const max=lastZoneId.get().lastZoneId;
+    for(let i=1;i<parseInt(zone.numOfZones)+1;i++){
+        zoneIns.run(max+i,zone.name,i);
+    }
+}
 export default (check_availability, zone_client_info);
 

@@ -62,7 +62,7 @@
                     <th>Διαθεσιμότητα</th>
                 </tr>
             </table>
-            <button id="changeAvailabilityButton">Αλλαγή Διαθεσιμότητας</button>
+            {{!-- <button id="changeAvailabilityButton">Αλλαγή Διαθεσιμότητας</button>
             <form class="admin-form" id="changeAvailabilityForm" data-display="false">
                 <fieldset>
                     <legend>Διαθεσιμότητα</legend>
@@ -78,7 +78,7 @@
                     <input name="date" type="hidden">
                     <input type="submit" value="συνέχεια">
                 </fieldset>
-            </form>
+            </form> --}}
         </div>
         <div id="zoneManagement" class="management-item">
             <h3>Διαχείριση Χώρων</h3>
@@ -90,11 +90,19 @@
                     <fieldset>
                         <legend>προσθήκη χώρου</legend>
                         <label for="zoneName">Όνομα Χώρου</label>
-                        <input name="zone"type="text" id="zoneName">
-                        <label for="zoneCapacity">Συνολική Χωριτικότητα Χώρου</label>
-                        <input name="totalAvailability"type="number" id="zoneCapacity">
-                        <label for="defaultCost">Προκαθορισμένη Τιμή</label>
-                        <input name="cost"id="defaultCost" type="number">
+                        <input name="name"type="text" id="zoneName">
+                        <label for="defaultPeople">Προκαθορισμένος αριθμός ατόμων</label>
+                        <input name="defaultPeople" type="number" id="defaultPeople">
+                        <label for="maxPeople">Μέγιστος αριθμός ατόμων</label>
+                        <input name="maxPeople" type="number" id="maxPeople">
+                        <label for="additionalChargePerPerson">Έξτρα χρέσωση ανά άτομο</label>
+                        <input name="additionalChargePerPerson" type="text" id="additionalChargePerPerson">
+                        <label for="highSeasonPrice">Τιμή υψηλής περιόδου</label>
+                        <input name="highSeasonPrice" type="text" id="highSeasonPrice">
+                        <label for="lowSeasonPrice">Τιμή χαμηλής περιόδου</label>
+                        <input name="lowSeasonPrice" type="text" id="lowSeasonPrice">
+                        <label for="numOfZones">Συνολικός αριθμός χώρων</label>
+                        <input name="numOfZones"type="number" id="numOfZones">
                         <input type="submit" value="προσθήκη">
                     </fieldset>
                 </form>

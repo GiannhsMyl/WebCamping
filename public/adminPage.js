@@ -18,16 +18,16 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 		if(curCalMonth<11)
 			makeCallendar(++curCalMonth),yearSelect.value;
 	});
-	document.querySelector("#changeAvailabilityButton").addEventListener("click",()=>{
-		let form=document.querySelector("#changeAvailabilityForm");
-		if(form.getAttribute("data-display")==="false"){
-			form.setAttribute("data-display","true");
-			form.style.display="block";
-		}else{
-			form.setAttribute("data-display","false");
-			form.style.display="none";
-		}
-	});
+	// document.querySelector("#changeAvailabilityButton").addEventListener("click",()=>{
+	// 	let form=document.querySelector("#changeAvailabilityForm");
+	// 	if(form.getAttribute("data-display")==="false"){
+	// 		form.setAttribute("data-display","true");
+	// 		form.style.display="block";
+	// 	}else{
+	// 		form.setAttribute("data-display","false");
+	// 		form.style.display="none";
+	// 	}
+	// });
 	let editToggle=false;
 	document.querySelector("#editReservation button").addEventListener("click",()=>{
 		console.log("edit");
@@ -87,12 +87,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 	});
 	fillReservations();
 	fillAvailability();
-	document.querySelector("#changeAvailabilityForm input[type=submit]").addEventListener("click",()=>{
-		let d=(new Date()).toDateString;
-		// console.log(d);
-			
-	});
-	document.querySelector("#changeAvailabilityForm input[type=hidden]").value=new Date().toISOString().split("T")[0];
+	// document.querySelector("#changeAvailabilityForm input[type=hidden]").value=new Date().toISOString().split("T")[0];
 	fillZoneTable();
 	fillVisitorsTable();
 
@@ -593,18 +588,30 @@ function fillVisitorsTable(){
 					}
 					vis.push(tempVisitor);
 				}
-				const response=await fetch("/admin/editVisitors",{
-					method:"POST",
-					headers:{
-					"Content-type":"application/json"
-					},
-					body:JSON.stringify(vis)
-				});
-				// let vitor=await response.json();
-				deleteTable("#visitorList tr");
-				visitors=await refreshVisitors();
-				document.querySelector("#visitors>button").remove();
-				fillVisitorsTable();
+				let invalidEmail=false;
+				for(let i=0;i<vis.length;i++){
+					// console.log(vis[i])
+					if(vis[i].email.match("[A-Za-z0-9]+@[A-Za-z0-9]+\\.[A-Za-z0-9]+")===null){
+						invalidEmail=true;
+						break;
+					}
+				}
+				if(invalidEmail){
+					alert("Δώστε μια έγκυρη τιμή email");
+				}else{
+					const response=await fetch("/admin/editVisitors",{
+						method:"POST",
+						headers:{
+						"Content-type":"application/json"
+						},
+						body:JSON.stringify(vis)
+					});
+					// let vitor=await response.json();
+					deleteTable("#visitorList tr");
+					visitors=await refreshVisitors();
+					document.querySelector("#visitors>button").remove();
+					fillVisitorsTable();
+				}
 			});
 			document.querySelector("#visitors").appendChild(saveButton);
 		}else{
