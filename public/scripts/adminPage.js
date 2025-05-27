@@ -64,11 +64,18 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 					body:JSON.stringify(editedReservations)
 				});
 				let answer=await response.text();
-				console.log(`response:${answer}`)
-				console.log(editedReservations);
-				alert("Οι αλλαγές αποθηκεύτηκαν!");
+				if(answer=="error"){
+					alert("Ο χώρος που επιλέχθηκε είναι κατελημένος");
+				}else{
+					console.log(`response:${answer}`)
+					console.log(editedReservations);
+					alert("Οι αλλαγές αποθηκεύτηκαν!");
+				}
 				document.querySelector("#reservation .saveButton").remove();
 				reservations=await refreshReservations(lastDate);
+				deleteTable("#availabilityTable>tr");
+				deleteTable("#canvasContainer>div");
+				await fillAvailability(lastDate);
 				deleteTable("#reservationList>tr");
 				fillReservations();
 				editToggle=!editToggle;

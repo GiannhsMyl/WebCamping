@@ -171,8 +171,11 @@ function getAllReservations(req,res){
     res.send(JSON.stringify(reservations));
 }
 function editReservations(req,res){
-    model.updateReservation(req.body);
-    res.send("reservations edited");
+    if(model.updateReservation(req.body)=="err"){
+      res.send("error");
+    }else{
+      res.send("reservations edited");
+    }
 }
 function deleteReservation(req,res){
   let reservation2Delete=req.params.reservation;

@@ -126,12 +126,24 @@ export function searchAdminAvailbility(date,zoneType){
 }
 
 export function updateReservation(reservations){
+    const zoneIdq=sql.prepare("SELECT Z.id FROM ZONE AS Z WHERE zoneType=? AND num=?");
+
+    for(let i=0;i<reservations.length;i++){
+        const inCaseZoneChanged=sql.prepare("SELECT RZ.zoneId FROM (RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=reservationId) WHERE ((checkIn <= ? AND checkOut > ?) OR (checkIn >= ? AND checkOut <= ?) OR (checkIn < ? AND checkOut >= ?)) AND R.id!=?").all(reservations[i].checkIn,reservations[i].checkIn,reservations[i].checkIn,reservations[i].checkOut,reservations[i].checkOut,reservations[i].checkOut,reservations[i].id);
+        for(let j=0;j<inCaseZoneChanged.length;j++){
+            if(zoneIdq.get(reservations[i].zone,reservations[i].zoneNum).id==inCaseZoneChanged[j].zoneId)
+                return "err"
+        }
+    }
+
+    const zonesQuantity=sql.prepare("SELECT COUNT(*) AS q FROM (RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=reservationId) WHERE R.id=?")
+
     const resUp=sql.prepare("UPDATE RESERVATION SET people=?,checkIn=?,checkOut=? WHERE Id=?");
     const oldZoneId=sql.prepare("SELECT RZ.zoneId FROM RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId WHERE R.id=?");
     const reszonenumUp=sql.prepare("UPDATE RES_ZONE_NUM SET zoneId=? WHERE reservationId=?");
     for(let i=0;i<reservations.length;i++){
-        resUp.run(reservations[i].people,reservations[i].checkIn,reservations[i].checkOut,reservations[i].id);
-        const zoneIdq=sql.prepare("SELECT Z.id FROM ZONE AS Z WHERE zoneType=? AND num=?");
+        resUp.run(reservations[i].people,reservations[i].checkIn,reservations[i].checkOut,reservations[i].id)//,;
+        const costUp=sql.prepare("UPDATE RESERVATION SET totalPrice=? WHERE id=?").run(calculate_total_price(reservations[i].checkIn,reservations[i].checkOut,reservations[i].people,zonesQuantity.get(reservations[i].id).q,reservations[i].zone),reservations[i].id);
         let zoneId=zoneIdq.get(reservations[i].zone,reservations[i].zoneNum);
         reszonenumUp.run(zoneId.id,reservations[i].id); 
     }
