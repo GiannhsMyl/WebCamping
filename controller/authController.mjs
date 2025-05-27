@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import fs from "fs";
 import path from 'path';
+import rateLimit from 'express-rate-limit';
 
 const usersPath = path.resolve('data', 'users.json');
 
@@ -15,12 +16,28 @@ const readUsers = () => {
 };
 
 
+export const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 5, 
+    handler: (req, res) => {
+        
+        req.session.rateLimitError = "Πάρα πολλές προσπάθειες σύνδεσης. Παρακαλώ δοκιμάστε ξανά σε 15 λεπτά.";
+        res.render('connect.hbs', { 
+            error: req.session.rateLimitError,
+            title: "connect",
+            css: ["main_style.css", "connection-menu-style.css"], 
+            script : ["collapsed_menu.js"] 
+        }); 
+    },
+    skipSuccessfulRequests: true, 
+});
+
 export const handleLogin = async (req, res) => {
     const { username, password } = req.body;
     
     if (!username || !password) {
         return res.status(400).render('connect.hbs', { 
-            error: "Username and password are required",
+            error: "Απαιτούνται όνομα χρήστη και κωδικός",
             title: "connect",
             css: ["main_style.css", "connection-menu-style.css"], 
             script : ["collapsed_menu.js"] 

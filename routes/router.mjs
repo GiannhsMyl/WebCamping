@@ -20,7 +20,7 @@ router.get("/connect", checkAuth, controller.login);
 router.use("/admin",authController.checkAuth)
 router.get("/admin",controller.adminPage);
 
-router.post("/login", authController.handleLogin);      
+router.post("/login", authController.loginLimiter, authController.handleLogin);      
 router.get("/logout", authController.handleLogout);   
 
 router.post("/admin/addZone",controller.addZone);
