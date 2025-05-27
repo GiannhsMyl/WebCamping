@@ -14,63 +14,52 @@ const readUsers = () => {
     }
 };
 
-const writeUsers = (users) => {
-    fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
-};
-
-/* export const handleRegister = async (req, res) => {
-    const { username, password } = req.body;
-    
-    // Input validation
-    if (!username || !password) {
-        return res.status(400).send("Username and password are required");
-    }
-
-    const users = readUsers();
-    
-    // Check if user already exists
-    if (users.some(u => u.username === username)) {
-        return res.status(409).send("Username already exists");
-    }
-
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        users.push({ username, password: hashedPassword });
-        writeUsers(users);
-        
-        res.status(201).send("Registration successful!");
-    } catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).send("Registration failed");
-    }
-}; */
 
 export const handleLogin = async (req, res) => {
     const { username, password } = req.body;
     
     if (!username || !password) {
-        return res.status(400).send("Username and password are required");
+        return res.status(400).render('connect.hbs', { 
+            error: "Username and password are required",
+            title: "connect",
+            css: ["main_style.css", "connection-menu-style.css"], 
+            script : ["collapsed_menu.js"] 
+        });
     }
 
     const users = readUsers();
     const user = users.find(u => u.username === username);
 
     if (!user) {
-        // Don't reveal whether username exists for security
-        return res.status(401).send("Invalid credentials");
+        return res.status(401).render('connect.hbs', { 
+            error: "Λάθος όνομα χρήστη ή κωδικός",
+            title: "connect",
+            css: ["main_style.css", "connection-menu-style.css"], 
+            script : ["collapsed_menu.js"]
+        });
     }
 
     try {
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            return res.status(401).send("Invalid credentials");
+            return res.status(401).render('connect.hbs', { 
+                error: "Λάθος όνομα χρήστη ή κωδικός",
+                title: "connect",
+                css: ["main_style.css", "connection-menu-style.css"], 
+                script : ["collapsed_menu.js"] 
+            });
         }
 
         req.session.user = user;
         res.redirect("/admin");
     } catch (error) {
         console.error("Login error:", error);
-        res.status(500).send("Login failed");
+        res.status(500).render('connect.hbs', { 
+            error: "Σφάλμα κατά τη σύνδεση",
+            title: "connect",
+            css: ["main_style.css", "connection-menu-style.css"], 
+            script : ["collapsed_menu.js"]
+        });
     }
 };
 
@@ -84,7 +73,7 @@ export const handleLogout = (req, res) => {
     });
 };
 //
-export let checkAuth= (req,res,next)=>{
+export let checkAuth = (req,res,next)=>{
     if(req.session.user){
         next();
     }else{
