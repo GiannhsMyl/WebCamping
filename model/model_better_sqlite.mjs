@@ -155,10 +155,31 @@ export function deleteZoneType(zone){
     deleteType.run(zone);
 }
 export function editZoneType(zoneTypes){
+    const ztZoneNum=sql.prepare("SELECT numOfZones FROM ZONETYPE WHERE name=?");
     const ztUp=sql.prepare("UPDATE ZONETYPE SET name=?,defaultPeople=?,maxPeople=?,additionalChargePerPerson=?,highSeasonPrice=?,lowSeasonPrice=?,numOfZones=? WHERE name=?");
-    for(let i=0;zoneTypes.length;i++){
+    for(let i=0;i<zoneTypes.length;i++){
+        let prevNum=ztZoneNum.get(zoneTypes[i].name).numOfZones
+        let max=prevNum-zoneTypes[i].numOfZones;
+        let lastId=sql.prepare("SELECT MAX(id) AS id FROM ZONE").get().id;
+        console.log(max);
+        if(max<0){//prepei na prosthesoume xorous
+            console.log(`prosthese ${abs(max)}`);
+            const addZ=sql.prepare("INSERT INTO ZONE VALUES(?,?,?)");
+            for(let j=1;j<abs(max)+1;j++){
+                addZ.run(lastId+j,zoneTypes[i].name,prevNum+j);
+            }
+        }else if(max>0){//prepei na afairesoume xorous
+            console.log(`afairese ${abs(max)}`);
+            const remZ=sql.prepare("DELETE FROM ZONE WHERE num=? AND ZONETYPE=?");
+            for(let j=0;j<abs(max);j++){
+                remZ.run(prevNum-j,zoneTypes[i].name);
+            }
+        }
         ztUp.run(zoneTypes[i].name,zoneTypes[i].defaultPeople,zoneTypes[i].maxPeople,zoneTypes[i].additionalChargePerPerson,zoneTypes[i].highSeasonPrice,zoneTypes[i].lowSeasonPrice,zoneTypes[i].numOfZones,zoneTypes[i].ogname);
     }
+}
+function abs(x){
+    return x>0? x:-1*x;
 }
 export function addZoneType(zone){
     const zIns=sql.prepare("INSERT INTO ZONETYPE VALUES(?,?,?,?,?,?,?)");
@@ -169,6 +190,10 @@ export function addZoneType(zone){
     for(let i=1;i<parseInt(zone.numOfZones)+1;i++){
         zoneIns.run(max+i,zone.name,i);
     }
+}
+export function addVisitor(visitor){
+    const addVisitor=sql.prepare("INSERT INTO VISITOR VALUES(?,?,?,?)");
+    addVisitor.run(visitor.email,visitor.telephoneNumber,visitor.firstName,visitor.lastName);
 }
 export default (check_availability, zone_client_info);
 

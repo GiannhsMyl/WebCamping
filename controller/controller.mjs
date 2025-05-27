@@ -212,4 +212,16 @@ export function deleteVisitor(req,res){
     model.deleteVisitor(visitor2Delete);
     res.redirect("/admin");
 }
+
+export function addVisitor(req,res){
+    let visitor=req.body;
+    model.addVisitor(visitor);
+    res.redirect("/admin");
+}
+export function addReservation(req,res){
+    let reservation=req.body;
+    console.log(reservation)
+    console.log(model.check_availability(reservation.checkIn,reservation.checkOut,reservation.people,reservation.zoneNum,reservation.zoneType));
+    res.send("ok")
+}
 export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search,getVisitors,getSpecificVisitor,searchVisitor,getAvailabilities};

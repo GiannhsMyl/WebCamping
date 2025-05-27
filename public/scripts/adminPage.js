@@ -2,12 +2,14 @@ let reservations=[];
 let zones=[];
 let visitors=[];
 const dpr=window.devicePixelRatio;
+let lastDate;
 document.addEventListener("DOMContentLoaded",async ()=>{
 	console.log("main");
 	curCalMonth=(new Date()).getMonth();
 	makeCallendar(curCalMonth);
 	zones=await refreshZones();
 	reservations=await refreshReservations();
+	lastDate=document.querySelector(".today").getAttribute("data-date");
 	visitors=await refreshVisitors();	
 	let yearSelect=document.querySelector("#yearSelect");
 	document.querySelector(".callendarLtButton").addEventListener("click",async ()=>{
@@ -66,9 +68,10 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 				console.log(editedReservations);
 				alert("Οι αλλαγές αποθηκεύτηκαν!");
 				document.querySelector("#reservation .saveButton").remove();
-				reservations=await refreshReservations();
+				reservations=await refreshReservations(lastDate);
 				deleteTable("#reservationList>tr");
 				fillReservations();
+				editToggle=!editToggle;
 			});
 			parentDiv.appendChild(saveButton);
 		}else{
@@ -90,8 +93,17 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 	// document.querySelector("#changeAvailabilityForm input[type=hidden]").value=new Date().toISOString().split("T")[0];
 	fillZoneTable();
 	fillVisitorsTable();
-
+	document.querySelector("#visitors>button").addEventListener("click",showAddVisitorForm);
+	document.querySelector("#reservation>button").addEventListener("click",showAddResForm);
 	document.querySelector("#visitorSearch button").addEventListener("click",searchVisitor);
+
+	let select=document.querySelector("#zoneType");
+	for(let i=0;i<zones.length;i++){
+		let temp=document.createElement("option");
+		temp.setAttribute("value",zones[i].name);
+		temp.innerHTML=zones[i].name;
+		select.appendChild(temp);
+	}
 });
 
 function addReservation(reserv,toggle=false){
@@ -106,6 +118,8 @@ function addReservation(reserv,toggle=false){
 	
 	let checkOutColumn=document.createElement("td");
 	
+	let costColumn=document.createElement("td");
+
 	let deleteColumn=document.createElement("td");
 
 	let id=reserv.id;
@@ -165,7 +179,7 @@ function addReservation(reserv,toggle=false){
 			let tempOption=document.createElement("option");
 			tempOption.setAttribute("value",i);
 			tempOption.innerHTML=i;
-			if(zone.split("-")[1]===i)
+			if(zone.split("-")[1]==i)
 				tempOption.setAttribute("selected","");
 			op.appendChild(tempOption);
 		}
@@ -220,12 +234,14 @@ function addReservation(reserv,toggle=false){
 	linkVisitor.innerHTML=name;
 	nameColumn.appendChild(linkVisitor);
 	
+	costColumn.innerHTML=reserv.totalPrice;
 	//
 	row.appendChild(nameColumn);
 	row.appendChild(zoneColumn);
 	row.appendChild(peopleColumn);
 	row.appendChild(checkInColumn);
 	row.appendChild(checkOutColumn);
+	row.appendChild(costColumn);
 	row.appendChild(deleteColumn);
 
 	document.querySelector("#reservationList").appendChild(row);
@@ -269,9 +285,10 @@ function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MA
 				temp.classList.add("today");
 			}
 			temp.addEventListener("click",async (event)=>{
-				let dateAttr=event.currentTarget.getAttribute("data-Date")
+				let dateAttr=event.currentTarget.getAttribute("data-Date");
+				lastDate=dateAttr;
 				let date=new Date(dateAttr);
-				document.querySelector("#changeAvailabilityForm input[type=hidden]").value=`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
+				// document.querySelector("#changeAvailabilityForm input[type=hidden]").value=`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
 				if(temp.classList.contains("today")){
 					document.querySelector("#reservation>h3").innerHTML=`Κρατήσεις Σήμερα`;
 					document.querySelector("#availability>h3").innerHTML=`Διαθεσιμότητα Σήμερα`;
@@ -438,7 +455,7 @@ function fillZoneTable(){
 				zones=await refreshZones();
 				fillZoneTable();
 				fillAvailability();
-
+				document.querySelector("#zoneManagement .saveButton").remove();
 			});
 			parentDiv.appendChild(saveButton);
 			let zoneList=document.querySelectorAll("#zoneList tr");
@@ -577,6 +594,7 @@ function fillVisitorsTable(){
 		if(!toggle){
 			let saveButton=document.createElement("button");
 			saveButton.innerHTML="Αποθήκευση αλλαγών";
+			saveButton.classList.add("save-button");
 			saveButton.addEventListener("click",async ()=>{
 				let table=document.querySelectorAll("#visitorList tr");
 				let vis=[];
@@ -609,13 +627,13 @@ function fillVisitorsTable(){
 					// let vitor=await response.json();
 					deleteTable("#visitorList tr");
 					visitors=await refreshVisitors();
-					document.querySelector("#visitors>button").remove();
+					document.querySelector("#visitors .save-button").remove();
 					fillVisitorsTable();
 				}
 			});
 			document.querySelector("#visitors").appendChild(saveButton);
 		}else{
-			document.querySelector("#visitors>button").remove();
+			document.querySelector("#visitors .save-button").remove();
 		}
 		// deleteTable("#visitorList tr:not(:first-child)");
 	});
@@ -719,4 +737,25 @@ async function getSpecificVisitor(event) {
 	visitors.push(f);//await response.json()
 	deleteVisitorTable();
 	fillVisitorsTable();
+}
+
+function showAddVisitorForm(event){
+	let toggle=event.target.getAttribute("data-show")=="false"? false :true;
+	if(!toggle){
+		document.querySelector("#addVisitor").style.display="block";
+	}else{
+		document.querySelector("#addVisitor").style.display="none";
+	}
+	toggle=!toggle;
+	event.target.setAttribute("data-show",toggle);
+}
+function showAddResForm(event){
+	let toggle=event.target.getAttribute("data-show")=="false"? false :true;
+	if(!toggle){
+		document.querySelector("#addReservation").style.display="block";
+	}else{
+		document.querySelector("#addReservation").style.display="none";
+	}
+	toggle=!toggle;
+	event.target.setAttribute("data-show",toggle);
 }

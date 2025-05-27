@@ -119,3 +119,6 @@ td input[type="text"]{
 td a:visited{
 	color:blue;
 }
+#addVisitor,#addReservation{
+	display: none;
+}

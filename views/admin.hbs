@@ -5,14 +5,14 @@
         <h2>-Camping Apollon Delphi-</h2>
     </div>
     <div class="ser-container dashboard">
-        <a href="#availability">
-            <div class="ser-item">
-                Αλλαγή Διαθεσιμότητας
-            </div>
-        </a>
         <a href="#reservation">
             <div class="ser-item">
                 προβολή κρατήσεων
+            </div>
+        </a>
+        <a href="#availability">
+            <div class="ser-item">
+                Αλλαγή Διαθεσιμότητας
             </div>
         </a>
         <a href="#zoneManagement">
@@ -47,10 +47,29 @@
                     <th>άτομα</th>
                     <th>check-in</th>
                     <th>check-out</th>
+                    <th>Συνολική Τιμή</th>
                     <th id="editReservation"><button>επεξεργασία</button></th>
                 </tr>
             </table>
-            <a href="/reservation"><button>προσθήκη κράτησης</button></a>
+            <button data-show="false">προσθήκη κράτησης</button>
+            <form class="admin-form" id="addReservation" method="POST" action="/admin/addReservation" >
+                    <fieldset>
+                        <legend>προσθήκη Κράτησης</legend>
+                        <label for="email">email Πελάτη</label>
+                        <input name="email"type="text" id="email" pattern="[A-Za-z0-9]+@[A-Za-z0-9]+\.[A-Za-z0-9]+">
+                        <label for="zoneType">τύπος χώρου</label>
+                        <select name="zoneType" id="zoneType"></select>
+                        <label for="zoneNum">αριθμός χώρων</label>
+                        <input name="zoneNum" id="zoneNum" type="number" value="1">
+                        <label for="people">αριθμός ατόμων</label>
+                        <input name="people" id="zoneNum" type="number" value="1">
+                        <label for="checkIn">check-in</label>
+                        <input name="checkIn" type="date" id="checkIn">
+                        <label for="checkOut">check-out</label>
+                        <input name="checkOut" type="date" id="checkOut">
+                        <input type="submit" value="προσθήκη">
+                    </fieldset>
+                </form>
         </div>
         <div id="availability" class="management-item">
             <h3>Διαθεσιμότητα Σήμερα</h3>
@@ -116,6 +135,21 @@
                     <button>Αναζήτηση</button>
                 </div>
                 <table id="visitorList" class="table-list"></table>
+                <button data-show="false"> προσθήκη Επισκέπτη </button>
+                <form class="admin-form" id="addVisitor" method="POST" action="/admin/addVisitor" >
+                    <fieldset>
+                        <legend>προσθήκη Επισκέπτη</legend>
+                        <label for="firstName">Όνομα</label>
+                        <input name="firstName"type="text" id="firstName">
+                        <label for="lastName">Επίθετο</label>
+                        <input name="lastName" type="text" id="lastName">
+                        <label for="email">email</label>
+                        <input name="email" type="text" id="email">
+                        <label for="telephoneNumber">τηλέφωνο</label>
+                        <input name="telephoneNumber" type="text" id="telephoneNumber">
+                        <input type="submit" value="προσθήκη">
+                    </fieldset>
+                </form>
         </div>
     </div>
 	</main>
