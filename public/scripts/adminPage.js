@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 		}
 	});
 	fillReservations();
-	fillAvailability();
+	await fillAvailability();
 	// document.querySelector("#changeAvailabilityForm input[type=hidden]").value=new Date().toISOString().split("T")[0];
 	fillZoneTable();
 	fillVisitorsTable();
@@ -300,11 +300,17 @@ function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MA
 				}
 				
 				reservations=await refreshReservations(dateAttr);
+				let sv=document.querySelectorAll(".saveButton");
+				for(let i=0;i<sv.length;i++){
+					sv[i].remove();
+				}
 				deleteTable("#reservationList>tr");
 				fillReservations();
 				deleteTable("#availabilityTable>tr");
 				deleteTable("#canvasContainer>div");
-				fillAvailability(dateAttr);
+				await fillAvailability(dateAttr);
+				deleteTable("#zoneList>tr");
+				fillZoneTable();
 				window.location.href ="#reservation";
 			});
 		}
@@ -454,7 +460,7 @@ function fillZoneTable(){
 				deleteTable("#availabilityTable>tr");
 				zones=await refreshZones();
 				fillZoneTable();
-				fillAvailability();
+				await fillAvailability();
 				document.querySelector("#zoneManagement .saveButton").remove();
 			});
 			parentDiv.appendChild(saveButton);
@@ -594,7 +600,7 @@ function fillVisitorsTable(){
 		if(!toggle){
 			let saveButton=document.createElement("button");
 			saveButton.innerHTML="Αποθήκευση αλλαγών";
-			saveButton.classList.add("save-button");
+			saveButton.classList.add("saveButton");
 			saveButton.addEventListener("click",async ()=>{
 				let table=document.querySelectorAll("#visitorList tr");
 				let vis=[];
@@ -633,7 +639,7 @@ function fillVisitorsTable(){
 			});
 			document.querySelector("#visitors").appendChild(saveButton);
 		}else{
-			document.querySelector("#visitors .save-button").remove();
+			document.querySelector("#visitors .saveButton").remove();
 		}
 		// deleteTable("#visitorList tr:not(:first-child)");
 	});
@@ -751,6 +757,8 @@ function showAddVisitorForm(event){
 }
 function showAddResForm(event){
 	let toggle=event.target.getAttribute("data-show")=="false"? false :true;
+	let tempDate=new Date();
+	document.querySelector("#checkIn").setAttribute("value",`${tempDate.getFullYear()}-${(tempDate.getMonth()>10)?tempDate.getMonth()+1:"0".concat("",tempDate.getMonth()+1)}-${tempDate.getDate()}`);
 	if(!toggle){
 		document.querySelector("#addReservation").style.display="block";
 	}else{
@@ -758,4 +766,11 @@ function showAddResForm(event){
 	}
 	toggle=!toggle;
 	event.target.setAttribute("data-show",toggle);
+}
+function checkDate(){
+	if(new Date(document.querySelector("#checkIn").value)>new Date(document.querySelector("#checkOut").value)){
+		alert("Η ημερομηνία check out δεν μπορεί να είναι πριν την ημερομηνία check in");
+		return false;
+	}
+	return true;
 }

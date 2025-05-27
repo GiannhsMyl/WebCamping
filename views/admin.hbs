@@ -52,21 +52,21 @@
                 </tr>
             </table>
             <button data-show="false">προσθήκη κράτησης</button>
-            <form class="admin-form" id="addReservation" method="POST" action="/admin/addReservation" >
+            <form class="admin-form" id="addReservation" method="POST" onsubmit="return checkDate()" action="/admin/addReservation" >
                     <fieldset>
                         <legend>προσθήκη Κράτησης</legend>
                         <label for="email">email Πελάτη</label>
-                        <input name="email"type="text" id="email" pattern="[A-Za-z0-9]+@[A-Za-z0-9]+\.[A-Za-z0-9]+">
+                        <input name="email"type="text" id="email" pattern="[A-Za-z0-9]+@[A-Za-z0-9]+\.[A-Za-z0-9]+" required>
                         <label for="zoneType">τύπος χώρου</label>
                         <select name="zoneType" id="zoneType"></select>
                         <label for="zoneNum">αριθμός χώρων</label>
-                        <input name="zoneNum" id="zoneNum" type="number" value="1">
+                        <input name="zoneNum" id="zoneNum" type="number" value="1" required>
                         <label for="people">αριθμός ατόμων</label>
-                        <input name="people" id="zoneNum" type="number" value="1">
+                        <input name="people" id="zoneNum" type="number" value="1" required>
                         <label for="checkIn">check-in</label>
-                        <input name="checkIn" type="date" id="checkIn">
+                        <input name="checkIn" type="date" id="checkIn" required>
                         <label for="checkOut">check-out</label>
-                        <input name="checkOut" type="date" id="checkOut">
+                        <input name="checkOut" type="date" id="checkOut" required>
                         <input type="submit" value="προσθήκη">
                     </fieldset>
                 </form>
@@ -109,19 +109,19 @@
                     <fieldset>
                         <legend>προσθήκη χώρου</legend>
                         <label for="zoneName">Όνομα Χώρου</label>
-                        <input name="name"type="text" id="zoneName">
+                        <input name="name"type="text" id="zoneName" required>
                         <label for="defaultPeople">Προκαθορισμένος αριθμός ατόμων</label>
-                        <input name="defaultPeople" type="number" id="defaultPeople">
+                        <input name="defaultPeople" type="number" id="defaultPeople" required>
                         <label for="maxPeople">Μέγιστος αριθμός ατόμων</label>
-                        <input name="maxPeople" type="number" id="maxPeople">
+                        <input name="maxPeople" type="number" id="maxPeople" required>
                         <label for="additionalChargePerPerson">Έξτρα χρέσωση ανά άτομο</label>
-                        <input name="additionalChargePerPerson" type="text" id="additionalChargePerPerson">
+                        <input name="additionalChargePerPerson" type="text" id="additionalChargePerPerson" required>
                         <label for="highSeasonPrice">Τιμή υψηλής περιόδου</label>
-                        <input name="highSeasonPrice" type="text" id="highSeasonPrice">
+                        <input name="highSeasonPrice" type="text" id="highSeasonPrice" required>
                         <label for="lowSeasonPrice">Τιμή χαμηλής περιόδου</label>
-                        <input name="lowSeasonPrice" type="text" id="lowSeasonPrice">
+                        <input name="lowSeasonPrice" type="text" id="lowSeasonPrice" required>
                         <label for="numOfZones">Συνολικός αριθμός χώρων</label>
-                        <input name="numOfZones"type="number" id="numOfZones">
+                        <input name="numOfZones"type="number" id="numOfZones" required>
                         <input type="submit" value="προσθήκη">
                     </fieldset>
                 </form>

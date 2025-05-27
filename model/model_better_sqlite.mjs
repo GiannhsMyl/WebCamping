@@ -1,6 +1,7 @@
 "use strict"
 
 import db from 'better-sqlite3';
+import calculate_total_price from './calculate_price.mjs';
 
 
 const sql = db('model/database.db', {fileMustExist: true});
@@ -126,6 +127,7 @@ export function searchAdminAvailbility(date,zoneType){
 
 export function updateReservation(reservations){
     const resUp=sql.prepare("UPDATE RESERVATION SET people=?,checkIn=?,checkOut=? WHERE Id=?");
+    const oldZoneId=sql.prepare("SELECT RZ.zoneId FROM RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId WHERE R.id=?");
     const reszonenumUp=sql.prepare("UPDATE RES_ZONE_NUM SET zoneId=? WHERE reservationId=?");
     for(let i=0;i<reservations.length;i++){
         resUp.run(reservations[i].people,reservations[i].checkIn,reservations[i].checkOut,reservations[i].id);
@@ -194,6 +196,33 @@ export function addZoneType(zone){
 export function addVisitor(visitor){
     const addVisitor=sql.prepare("INSERT INTO VISITOR VALUES(?,?,?,?)");
     addVisitor.run(visitor.email,visitor.telephoneNumber,visitor.firstName,visitor.lastName);
+}
+export function addReservation(reservation){
+    let cost=calculate_total_price(reservation.checkIn,reservation.checkOut,reservation.people,reservation.zoneNum,reservation.zoneType);
+    console.log(typeof(cost))
+    console.log(typeof(cost))
+    if(typeof(cost)!="string"){
+        const getZones=sql.prepare(`SELECT id FROM ZONE
+            WHERE zoneType = ? AND id NOT IN (SELECT DISTINCT zoneId
+            FROM RESERVATION
+            JOIN RES_ZONE_NUM ON RESERVATION.id = RES_ZONE_NUM.reservationId
+            JOIN ZONE ON ZONE.id = RES_ZONE_NUM.zoneId
+            WHERE (
+                (checkIn <= ? AND checkOut > ?) OR
+                (checkIn >= ? AND checkOut <= ?) OR
+                (checkIn < ? AND checkOut >= ?)
+            ) AND zoneType = ?)
+            ORDER BY id LIMIT ?;`).all(reservation.zoneType, reservation.checkIn, reservation.checkIn, reservation.checkIn, reservation.checkOut, reservation.checkOut, reservation.checkOut, reservation.zoneType, reservation.zoneNum);
+        const id=sql.prepare("SELECT MAX(id) AS id FROM RESERVATION").get().id;
+        const resIns=sql.prepare("INSERT INTO RESERVATION VALUES(?,?,?,?,?,?)").run(id+1,reservation.people,reservation.checkIn,reservation.checkOut,cost,reservation.email);
+        const rzIns=sql.prepare("INSERT INTO RES_ZONE_NUM VALUES(?,?)");
+        for(let i=0;i<getZones.length;i++){
+            rzIns.run(id+1,getZones[i].id);
+        }
+            return "all good";
+    }else{
+        return null;
+    }
 }
 export default (check_availability, zone_client_info);
 

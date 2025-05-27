@@ -221,7 +221,7 @@ export function addVisitor(req,res){
 export function addReservation(req,res){
     let reservation=req.body;
     console.log(reservation)
-    console.log(model.check_availability(reservation.checkIn,reservation.checkOut,reservation.people,reservation.zoneNum,reservation.zoneType));
-    res.send("ok")
+    console.log(model.addReservation(reservation));
+    res.redirect("/admin");
 }
 export {mainPage,contactPage,reservationPage,login,sendContactMessage,adminPage,addZone,editZone,getAllZones,getAllReservations,deleteZone,editReservations,deleteReservation,reservation_search,getVisitors,getSpecificVisitor,searchVisitor,getAvailabilities};

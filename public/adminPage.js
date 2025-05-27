@@ -751,6 +751,8 @@ function showAddVisitorForm(event){
 }
 function showAddResForm(event){
 	let toggle=event.target.getAttribute("data-show")=="false"? false :true;
+	let tempDate=new Date();
+	document.querySelector("#checkIn").setAttribute("value",`${tempDate.getFullYear()}-${(tempDate.getMonth()>10)?tempDate.getMonth()+1:"0".concat("",tempDate.getMonth()+1)}-${tempDate.getDate()}`);
 	if(!toggle){
 		document.querySelector("#addReservation").style.display="block";
 	}else{
