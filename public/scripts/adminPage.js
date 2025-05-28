@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 				});
 				let answer=await response.text();
 				if(answer=="error"){
-					alert("Ο χώρος που επιλέχθηκε είναι κατελημένος");
+					alert("Οι συγκεκριμένες επιλογές δεν είναι μπορουν να γίνουν γιατί δεν υπάρχει διαθεσιμότητα για αυτές");
 				}else{
 					console.log(`response:${answer}`)
 					console.log(editedReservations);

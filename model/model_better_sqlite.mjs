@@ -135,17 +135,27 @@ export function updateReservation(reservations){
                 return "err"
         }
     }
-
+    let index={res:0,i:0};
     const zonesQuantity=sql.prepare("SELECT COUNT(*) AS q FROM (RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=reservationId) WHERE R.id=?")
 
     const resUp=sql.prepare("UPDATE RESERVATION SET people=?,checkIn=?,checkOut=? WHERE Id=?");
     const oldZoneId=sql.prepare("SELECT RZ.zoneId FROM RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=RZ.reservationId WHERE R.id=?");
-    const reszonenumUp=sql.prepare("UPDATE RES_ZONE_NUM SET zoneId=? WHERE reservationId=?");
+    // const reszonenumUp=sql.prepare("UPDATE RES_ZONE_NUM SET zoneId=? WHERE reservationId=?");
+    const reszonenumUp=sql.prepare("UPDATE RES_ZONE_NUM SET zoneId=? WHERE reservationId=? AND zoneId=?");
     for(let i=0;i<reservations.length;i++){
         resUp.run(reservations[i].people,reservations[i].checkIn,reservations[i].checkOut,reservations[i].id)//,;
         const costUp=sql.prepare("UPDATE RESERVATION SET totalPrice=? WHERE id=?").run(calculate_total_price(reservations[i].checkIn,reservations[i].checkOut,reservations[i].people,zonesQuantity.get(reservations[i].id).q,reservations[i].zone),reservations[i].id);
         let zoneId=zoneIdq.get(reservations[i].zone,reservations[i].zoneNum);
-        reszonenumUp.run(zoneId.id,reservations[i].id); 
+        // reszonenumUp.run(zoneId.id,reservations[i].id); 
+
+        let oldIdz=oldZoneId.all(reservations[i].id);
+        if(oldIdz.length>1 && index.res==reservations[i].id){
+            index.i++;
+        }else if(index.res!=reservations[i].id){
+            index.res=reservations[i].id;
+            index.i=0;
+        }
+        reszonenumUp.run(zoneId.id,reservations[i].id,oldIdz[index.i].zoneId);
     }
 }
 export function removeReservation(id){
