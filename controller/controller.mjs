@@ -75,12 +75,20 @@ async function reservation_search(req, res) {
     //console.log(people);
     let results = await calculate_total_price(checkin, checkout, people, spacenum, spacetype);
     let zones = await model.zone_client_info();
+    let price;
+    console.log(typeof(results), results);
+    if (results !== "Δεν υπάρχει διαθεσιμότητα για τις επιλεγμένες παραμέτρους"){
+      price = "Total Price: " + results + "€";
+    }
+    else{
+      price = results;
+    }
     res.render('reservation.hbs', {
       title: "reservation",
       css: ["main_style.css", "reservation-style.css"], 
       script : ["collapsed_menu.js", "reservation.js"],
       zone: zones,
-      result: [{"checkin": checkin, "checkout": checkout, "spacetype": spacetype, "spacenum": spacenum, "peoplenum": people, "price": results}]
+      result: [{"checkin": checkin, "checkout": checkout, "spacetype": spacetype, "spacenum": spacenum, "peoplenum": people, "price": price}]
     });
   } catch (err) {
     throw err;
