@@ -653,9 +653,9 @@ function fillVisitorsTable(){//Γέμισμα του πίνακα επισκεπ
 						body:JSON.stringify(vis)
 					});
 					// let vitor=await response.json();
+					document.querySelector("#visitors .saveButton").remove();
 					deleteTable("#visitorList tr");
 					visitors=await refreshVisitors();
-					document.querySelector("#visitors .save-button").remove();
 					fillVisitorsTable();
 				}
 			});
