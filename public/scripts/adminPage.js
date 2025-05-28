@@ -286,7 +286,7 @@ function makeCallendar(month,year=(new Date()).getFullYear()){//0 JAN 1 FEB 2 MA
 	for(let i=1;i<daysInMonth+1+tempDate;i++){
 		let temp=document.createElement("div");
 		if(i>tempDate){
-			temp.setAttribute("data-date",`${year}-${((month+1)/10<1)? ("0"+(month+1)):(month+1)}-${i-tempDate}`);
+			temp.setAttribute("data-date",`${year}-${((month+1)/10<1)? ("0"+(month+1)):(month+1)}-${((i-tempDate)>10)? (i-tempDate):("0"+(i-tempDate))}`);
 			temp.innerHTML=i-tempDate;
 			if(isToday(new Date(`${year}-${month+1}-${i-tempDate}`))){
 				temp.classList.add("today");
