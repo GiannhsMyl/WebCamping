@@ -18,7 +18,8 @@
 
     Το αρχείο .env που θα δημιουργηθεί θα πρέπει να έχει την ακόλουθη μορφή:
 
-    ````PORT=XXXX
+    ````
+    PORT=XXXX
     EMAIL_ADDR=XXXX
     EMAIL_PASS=XXXX
     SESSION_SEC=XXXX
