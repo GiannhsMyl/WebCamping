@@ -128,14 +128,14 @@ export function searchAdminAvailbility(date,zoneType){
 export function updateReservation(reservations){
     const zoneIdq=sql.prepare("SELECT Z.id FROM ZONE AS Z WHERE zoneType=? AND num=?");
 
-    for(let i=0;i<reservations.length;i++){
+    for(let i=0;i<reservations.length;i++){//ελεγχος αν τα στοιχεία που έδωσε ο χρήστης δεν παραβιάζουν υπάρχουσα διαθεσιμότητα
         const inCaseZoneChanged=sql.prepare("SELECT RZ.zoneId FROM (RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=reservationId) WHERE ((checkIn <= ? AND checkOut > ?) OR (checkIn >= ? AND checkOut <= ?) OR (checkIn < ? AND checkOut >= ?)) AND R.id!=?").all(reservations[i].checkIn,reservations[i].checkIn,reservations[i].checkIn,reservations[i].checkOut,reservations[i].checkOut,reservations[i].checkOut,reservations[i].id);
         for(let j=0;j<inCaseZoneChanged.length;j++){
             if(zoneIdq.get(reservations[i].zone,reservations[i].zoneNum).id==inCaseZoneChanged[j].zoneId)
                 return "err"
         }
     }
-    let index={res:0,i:0};
+    let index={res:0,i:0};//χρησιμοποιείται σε περίπτωση κράτησης με παραπάνω χώρους
     const zonesQuantity=sql.prepare("SELECT COUNT(*) AS q FROM (RESERVATION AS R JOIN RES_ZONE_NUM AS RZ ON R.id=reservationId) WHERE R.id=?")
 
     const resUp=sql.prepare("UPDATE RESERVATION SET people=?,checkIn=?,checkOut=? WHERE Id=?");
@@ -149,7 +149,7 @@ export function updateReservation(reservations){
         // reszonenumUp.run(zoneId.id,reservations[i].id); 
 
         let oldIdz=oldZoneId.all(reservations[i].id);
-        if(oldIdz.length>1 && index.res==reservations[i].id){
+        if(oldIdz.length>1 && index.res==reservations[i].id){//αν προκειται για κράτηση με παραπάνω ΄χωρους θα εκτελεστει το ακόλουθο
             index.i++;
         }else if(index.res!=reservations[i].id){
             index.res=reservations[i].id;
@@ -185,15 +185,12 @@ export function editZoneType(zoneTypes){
         let prevNum=ztZoneNum.get(zoneTypes[i].name).numOfZones
         let max=prevNum-zoneTypes[i].numOfZones;
         let lastId=sql.prepare("SELECT MAX(id) AS id FROM ZONE").get().id;
-        console.log(max);
         if(max<0){//prepei na prosthesoume xorous
-            console.log(`prosthese ${abs(max)}`);
             const addZ=sql.prepare("INSERT INTO ZONE VALUES(?,?,?)");
             for(let j=1;j<abs(max)+1;j++){
                 addZ.run(lastId+j,zoneTypes[i].name,prevNum+j);
             }
         }else if(max>0){//prepei na afairesoume xorous
-            console.log(`afairese ${abs(max)}`);
             const remZ=sql.prepare("DELETE FROM ZONE WHERE num=? AND ZONETYPE=?");
             for(let j=0;j<abs(max);j++){
                 remZ.run(prevNum-j,zoneTypes[i].name);

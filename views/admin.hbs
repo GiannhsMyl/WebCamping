@@ -115,11 +115,11 @@
                         <label for="maxPeople">Μέγιστος αριθμός ατόμων</label>
                         <input name="maxPeople" type="number" id="maxPeople" required>
                         <label for="additionalChargePerPerson">Έξτρα χρέσωση ανά άτομο</label>
-                        <input name="additionalChargePerPerson" type="text" id="additionalChargePerPerson" required>
+                        <input name="additionalChargePerPerson" type="number" id="additionalChargePerPerson" required>
                         <label for="highSeasonPrice">Τιμή υψηλής περιόδου</label>
-                        <input name="highSeasonPrice" type="text" id="highSeasonPrice" required>
+                        <input name="highSeasonPrice" type="number" id="highSeasonPrice" required>
                         <label for="lowSeasonPrice">Τιμή χαμηλής περιόδου</label>
-                        <input name="lowSeasonPrice" type="text" id="lowSeasonPrice" required>
+                        <input name="lowSeasonPrice" type="number" id="lowSeasonPrice" required>
                         <label for="numOfZones">Συνολικός αριθμός χώρων</label>
                         <input name="numOfZones"type="number" id="numOfZones" required>
                         <input type="submit" value="προσθήκη">
@@ -140,13 +140,13 @@
                     <fieldset>
                         <legend>προσθήκη Επισκέπτη</legend>
                         <label for="firstName">Όνομα</label>
-                        <input name="firstName"type="text" id="firstName">
+                        <input name="firstName"type="text" id="firstName" required>
                         <label for="lastName">Επίθετο</label>
-                        <input name="lastName" type="text" id="lastName">
+                        <input name="lastName" type="text" id="lastName" required>
                         <label for="email">email</label>
-                        <input name="email" type="text" id="email">
+                        <input name="email" type="text" id="email" pattern="[A-Za-z0-9]+@[A-Za-z0-9]+\.[A-Za-z0-9]+" required>
                         <label for="telephoneNumber">τηλέφωνο</label>
-                        <input name="telephoneNumber" type="text" id="telephoneNumber">
+                        <input name="telephoneNumber" type="text" id="telephoneNumber" required>
                         <input type="submit" value="προσθήκη">
                     </fieldset>
                 </form>
