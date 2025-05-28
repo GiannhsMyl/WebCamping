@@ -4,7 +4,9 @@
   "main": "adminPage.js",
   "dependencies": {
     "accepts": "^2.0.0",
+    "argon2": "^0.43.0",
     "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.10.0",
     "body-parser": "^2.2.0",
     "bytes": "^3.1.2",
     "call-bind-apply-helpers": "^1.0.2",
@@ -26,6 +28,7 @@
     "etag": "^1.8.1",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
+    "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.1",
     "finalhandler": "^2.1.0",
     "forwarded": "^0.2.0",
